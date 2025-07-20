@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Perplexity Chat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .chat-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .chat-history {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .user-message {
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: right;
+        }
+        .ai-message {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+        textarea {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            height: 60px;
+        }
+        button {
+            padding: 0 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Perplexity Chat</h1>
+    
+    <div class="chat-container">
+        <div class="chat-history" id="chatHistory">
+            <div class="ai-message">Hello! How can I help you today?</div>
+        </div>
+        
+        <div class="input-area">
+            <textarea id="userInput" placeholder="Type your message here..."></textarea>
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        
+
+    </div>
+
+    <script>
+        // Send message function
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const chatHistory = document.getElementById('chatHistory');
+            
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            // Add user message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'user-message';
+            userDiv.textContent = message;
+            chatHistory.appendChild(userDiv);
+            
+            // Clear input
+            userInput.value = '';
+            
+            // Add loading message
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'ai-message';
+            loadingDiv.textContent = 'Thinking...';
+            chatHistory.appendChild(loadingDiv);
+            
+            // Scroll to bottom
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            
+            // Send to API
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain'
+                },
+                body: message
+            })
+            .then(function(response) {
+                return response.text();
+            })
+            .then(function(data) {
+                // Remove loading message
+                chatHistory.removeChild(loadingDiv);
+                
+                // Add AI response
+                const aiDiv = document.createElement('div');
+                aiDiv.className = 'ai-message';
+                aiDiv.textContent = data;
+                chatHistory.appendChild(aiDiv);
+                
+                // Scroll to bottom
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+                
+                // Message received successfully
+            })
+            .catch(function(error) {
+                // Remove loading message
+                chatHistory.removeChild(loadingDiv);
+                
+                // Add error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'ai-message';
+                errorDiv.textContent = 'Error: Could not get response';
+                chatHistory.appendChild(errorDiv);
+                
+                console.error('Error:', error);
+            });
+        }
+        
+        // Enter key handler
+        document.getElementById('userInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+
+    </script>
+</body>
+</html>

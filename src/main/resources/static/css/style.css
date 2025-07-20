@@ -1,0 +1,219 @@
+/* Main styles for Perplexity Chat UI */
+:root {
+    --primary-color: #3498db;
+    --primary-dark: #2980b9;
+    --text-color: #333;
+    --light-bg: #f5f5f5;
+    --border-color: #e0e0e0;
+    --chat-bg: #fafafa;
+    --ai-message-bg: #e0e0e0;
+    --user-message-bg: #3498db;
+    --user-message-text: white;
+    --code-bg: #f8f8f8;
+    --code-border: #3498db;
+    --header-color: #2c3e50;
+    --subtext-color: #7f8c8d;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    color: var(--header-color);
+    margin-bottom: 10px;
+    font-size: 2.5rem;
+}
+
+.header p {
+    color: var(--subtext-color);
+    font-size: 1.1rem;
+}
+
+.chat-container {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.chat-history {
+    height: 500px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: var(--chat-bg);
+}
+
+.message {
+    margin-bottom: 20px;
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 80%;
+    word-wrap: break-word;
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.user-message {
+    background-color: var(--user-message-bg);
+    color: var(--user-message-text);
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+    text-align: right;
+}
+
+.ai-message {
+    background-color: var(--ai-message-bg);
+    color: var(--text-color);
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+
+.input-area {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+textarea {
+    flex-grow: 1;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    resize: none;
+    font-family: inherit;
+    font-size: 1rem;
+    height: 60px;
+    transition: border-color 0.3s;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+button {
+    padding: 0 25px;
+    height: 60px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+    background-color: var(--primary-dark);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.loading {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.status {
+    text-align: center;
+    color: var(--subtext-color);
+    font-size: 0.9rem;
+    margin-top: 15px;
+    height: 20px;
+}
+
+pre {
+    white-space: pre-wrap;
+    background-color: var(--code-bg);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid var(--code-border);
+    margin: 15px 0;
+    overflow-x: auto;
+    font-size: 0.9rem;
+}
+
+code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .chat-container {
+        padding: 15px;
+    }
+    
+    .chat-history {
+        height: 400px;
+        padding: 15px;
+    }
+    
+    .message {
+        max-width: 90%;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+}
