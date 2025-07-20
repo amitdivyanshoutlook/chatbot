@@ -1,80 +1,251 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Perplexity Chat</title>
+    <title>Aadhya Eduverse AI Chat</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #5e35b1;
+            --secondary-color: #7e57c2;
+            --accent-color: #b39ddb;
+            --light-bg: #f5f5f5;
+            --dark-text: #333;
+            --light-text: #fff;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            font-family: 'Poppins', sans-serif;
+            max-width: 100%;
+            background-color: #f9f9f9;
+            color: var(--dark-text);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-container {
+            max-width: 900px;
+            width: 100%;
             margin: 0 auto;
-            padding: 20px;
+            padding: 10px 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
         }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            flex: 0 0 auto;
+            padding: 10px 0;
+        }
+        
+        .company-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .company-tagline {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        
         .chat-container {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
+        
         .chat-history {
-            height: 300px;
+            flex: 1 1 auto;
             overflow-y: auto;
-            border: 1px solid #eee;
-            padding: 10px;
-            margin-bottom: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            background-color: var(--light-bg);
+            border: none;
         }
+        
         .user-message {
-            background-color: #e3f2fd;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            text-align: right;
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 12px 18px;
+            border-radius: 18px 18px 0 18px;
+            margin-bottom: 15px;
+            max-width: 80%;
+            margin-left: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+        
         .ai-message {
-            background-color: #f5f5f5;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
+            background-color: white;
+            padding: 12px 18px;
+            border-radius: 18px 18px 18px 0;
+            margin-bottom: 15px;
+            max-width: 80%;
+            border-left: 4px solid var(--accent-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
+        
         .input-area {
             display: flex;
             gap: 10px;
+            align-items: center;
+            flex: 0 0 auto;
         }
+        
         textarea {
             flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            height: 60px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            height: 50px;
+            font-family: 'Poppins', sans-serif;
+            resize: none;
+            transition: border 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(94, 53, 177, 0.2);
+        }
+        
         button {
             padding: 0 20px;
-            background-color: #4caf50;
+            height: 50px;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        button i {
+            margin-left: 8px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #777;
+            flex: 0 0 auto;
+            padding: 5px 0;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .company-logo {
+                font-size: 1.5rem;
+            }
+            
+            .company-tagline {
+                font-size: 0.8rem;
+            }
+            
+            .chat-container {
+                padding: 10px;
+            }
+            
+            .chat-history {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .user-message, .ai-message {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            textarea {
+                padding: 10px;
+                height: 45px;
+            }
+            
+            button {
+                padding: 0 15px;
+                height: 45px;
+            }
+            
+            .footer {
+                font-size: 0.7rem;
+            }
         }
 
     </style>
 </head>
 <body>
-    <h1>Perplexity Chat</h1>
-    
-    <div class="chat-container">
-        <div class="chat-history" id="chatHistory">
-            <div class="ai-message">Hello! How can I help you today?</div>
+    <div class="main-container">
+        <div class="header">
+            <div class="company-logo">Aadhya Eduverse</div>
+            <div class="company-tagline">Empowering Education Through Innovation</div>
         </div>
         
-        <div class="input-area">
-            <textarea id="userInput" placeholder="Type your message here..."></textarea>
-            <button onclick="sendMessage()">Send</button>
+        <div class="chat-container">
+            <div class="chat-history" id="chatHistory">
+                <div class="ai-message">नमस्ते! मैं आपकी कैसे सहायता कर सकता हूँ?</div>
+            </div>
+            
+            <div class="input-area">
+                <textarea id="userInput" placeholder="अपना संदेश यहां टाइप करें..."></textarea>
+                <button onclick="sendMessage()">Send <i class="fas fa-paper-plane"></i></button>
+            </div>
         </div>
         
-
+        <div class="footer">
+            &copy; 2023 Aadhya Eduverse Private Limited. All rights reserved.
+        </div>
     </div>
 
     <script>
+        // Initialize when document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Focus on input field when page loads
+            document.getElementById('userInput').focus();
+            
+            // Add current year to footer
+            document.querySelector('.footer').innerHTML = 
+                `&copy; ${new Date().getFullYear()} Aadhya Eduverse Private Limited. All rights reserved.`;
+        });
+        
         // Send message function
         function sendMessage() {
             const userInput = document.getElementById('userInput');
@@ -89,14 +260,23 @@
             userDiv.textContent = message;
             chatHistory.appendChild(userDiv);
             
-            // Clear input
+            // Clear input and focus
             userInput.value = '';
+            userInput.focus();
             
-            // Add loading message
+            // Add loading message with animation
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'ai-message';
-            loadingDiv.textContent = 'Thinking...';
+            loadingDiv.innerHTML = '<span style="display:inline-block">सोच रहा हूँ</span><span class="dots">...</span>';
             chatHistory.appendChild(loadingDiv);
+            
+            // Animate the dots
+            let dotsCount = 0;
+            const dotsAnimation = setInterval(() => {
+                const dots = loadingDiv.querySelector('.dots');
+                dotsCount = (dotsCount + 1) % 4;
+                dots.textContent = '.'.repeat(dotsCount || 1);
+            }, 500);
             
             // Scroll to bottom
             chatHistory.scrollTop = chatHistory.scrollHeight;
@@ -113,28 +293,39 @@
                 return response.text();
             })
             .then(function(data) {
+                // Clear animation
+                clearInterval(dotsAnimation);
+                
                 // Remove loading message
                 chatHistory.removeChild(loadingDiv);
                 
-                // Add AI response
+                // Add AI response with fade-in effect
                 const aiDiv = document.createElement('div');
                 aiDiv.className = 'ai-message';
+                aiDiv.style.opacity = '0';
                 aiDiv.textContent = data;
                 chatHistory.appendChild(aiDiv);
                 
+                // Fade in the message
+                setTimeout(() => {
+                    aiDiv.style.transition = 'opacity 0.5s ease';
+                    aiDiv.style.opacity = '1';
+                }, 10);
+                
                 // Scroll to bottom
                 chatHistory.scrollTop = chatHistory.scrollHeight;
-                
-                // Message received successfully
             })
             .catch(function(error) {
+                // Clear animation
+                clearInterval(dotsAnimation);
+                
                 // Remove loading message
                 chatHistory.removeChild(loadingDiv);
                 
                 // Add error message
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'ai-message';
-                errorDiv.textContent = 'Error: Could not get response';
+                errorDiv.innerHTML = '<span style="color:#e74c3c"><i class="fas fa-exclamation-circle"></i> Error: Could not get response</span>';
                 chatHistory.appendChild(errorDiv);
                 
                 console.error('Error:', error);
@@ -148,8 +339,6 @@
                 sendMessage();
             }
         });
-        
-
     </script>
 </body>
 </html>
