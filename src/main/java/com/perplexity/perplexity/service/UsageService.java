@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class UsageService {
     
-    private static final int DAILY_LIMIT = 2;
+    private static final int DAILY_LIMIT = 10;
     
     @Autowired
     private UserUsageRepository userUsageRepository;
