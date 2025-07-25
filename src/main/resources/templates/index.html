@@ -58,23 +58,26 @@
         
         .user-info {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 0.8rem;
+            top: 5px;
+            right: 5px;
+            font-size: 0.75rem;
             text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 3px;
         }
         
         .usage-info {
             color: #666;
-            font-size: 0.7rem;
-            margin-top: 2px;
+            font-size: 0.65rem;
         }
         
         #logoutBtn {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            margin-left: 10px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
             background-color: #e74c3c;
+            white-space: nowrap;
         }
         
         #logoutBtn:hover {
@@ -205,6 +208,35 @@
             
             .company-tagline {
                 font-size: 0.8rem;
+            }
+            
+            .user-info {
+                position: static;
+                text-align: center;
+                margin-bottom: 10px;
+                font-size: 0.7rem;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            
+            .usage-info {
+                font-size: 0.6rem;
+                order: 1;
+                width: 100%;
+            }
+            
+            #welcomeUser {
+                order: 2;
+            }
+            
+            #logoutBtn {
+                order: 3;
+                padding: 3px 6px;
+                font-size: 0.65rem;
+                margin-left: 0;
             }
             
             .chat-container {
