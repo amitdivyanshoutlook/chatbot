@@ -53,6 +53,25 @@
             margin-bottom: 15px;
             flex: 0 0 auto;
             padding: 10px 0;
+            position: relative;
+        }
+        
+        .user-info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.8rem;
+        }
+        
+        #logoutBtn {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            background-color: #e74c3c;
+        }
+        
+        #logoutBtn:hover {
+            background-color: #c0392b;
         }
         
         .company-logo {
@@ -217,6 +236,10 @@
         <div class="header">
             <div class="company-logo">Aadhya Eduverse</div>
             <div class="company-tagline">Empowering Education Through Innovation</div>
+            <div class="user-info">
+                <span id="welcomeUser"></span>
+                <button id="logoutBtn" onclick="logout()">Logout</button>
+            </div>
         </div>
         
         <div class="chat-container">
@@ -238,6 +261,9 @@
     <script>
         // Initialize when document is ready
         document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            checkAuth();
+            
             // Focus on input field when page loads
             document.getElementById('userInput').focus();
             
@@ -245,6 +271,36 @@
             document.querySelector('.footer').innerHTML = 
                 `&copy; ${new Date().getFullYear()} Aadhya Eduverse Private Limited. All rights reserved.`;
         });
+        
+        // Check authentication status
+        function checkAuth() {
+            fetch('/api/auth/check')
+            .then(response => response.json())
+            .then(data => {
+                if (data.authenticated) {
+                    document.getElementById('welcomeUser').textContent = 'Welcome, ' + data.userName;
+                } else {
+                    window.location.href = '/login';
+                }
+            })
+            .catch(error => {
+                window.location.href = '/login';
+            });
+        }
+        
+        // Logout function
+        function logout() {
+            fetch('/api/auth/logout', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = '/login';
+            })
+            .catch(error => {
+                window.location.href = '/login';
+            });
+        }
         
         // Send message function
         function sendMessage() {
@@ -321,6 +377,12 @@
                 
                 // Remove loading message
                 chatHistory.removeChild(loadingDiv);
+                
+                // Check if it's an authentication error
+                if (error.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
                 
                 // Add error message
                 const errorDiv = document.createElement('div');
