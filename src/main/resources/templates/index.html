@@ -61,6 +61,13 @@
             top: 10px;
             right: 10px;
             font-size: 0.8rem;
+            text-align: right;
+        }
+        
+        .usage-info {
+            color: #666;
+            font-size: 0.7rem;
+            margin-top: 2px;
         }
         
         #logoutBtn {
@@ -238,6 +245,7 @@
             <div class="company-tagline">Empowering Education Through Innovation</div>
             <div class="user-info">
                 <span id="welcomeUser"></span>
+                <div class="usage-info" id="usageInfo"></div>
                 <button id="logoutBtn" onclick="logout()">Logout</button>
             </div>
         </div>
@@ -279,6 +287,7 @@
             .then(data => {
                 if (data.authenticated) {
                     document.getElementById('welcomeUser').textContent = 'Welcome, ' + data.userName;
+                    document.getElementById('usageInfo').textContent = 'Remaining: ' + data.remainingRequests + '/10';
                 } else {
                     window.location.href = '/login';
                 }

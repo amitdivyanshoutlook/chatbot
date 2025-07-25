@@ -65,6 +65,9 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @Autowired
+    private com.perplexity.perplexity.service.UsageService usageService;
+    
     @GetMapping("/check")
     public ResponseEntity<Map<String, Object>> checkAuth(HttpSession session) {
         Map<String, Object> response = new HashMap<>();
@@ -73,6 +76,7 @@ public class AuthController {
         if (userId != null) {
             response.put("authenticated", true);
             response.put("userName", session.getAttribute("userName"));
+            response.put("remainingRequests", usageService.getRemainingRequests(userId));
         } else {
             response.put("authenticated", false);
         }
