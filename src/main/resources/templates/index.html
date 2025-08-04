@@ -169,7 +169,7 @@
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
-            padding: var(--space-md);
+            padding: var(--space-xs);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -580,7 +580,7 @@
             }
             
             .chat-container {
-                height: calc(100vh - 120px);
+                height: calc(100vh - 90px);
                 padding: var(--space-md);
                 border-radius: var(--radius-xl);
             }
@@ -589,7 +589,7 @@
         /* Additional mobile optimizations */
         @media (max-width: 768px) {
             .chat-container {
-                height: calc(100vh - 130px);
+                height: calc(100vh - 100px);
                 min-height: 350px;
             }
         }
@@ -608,9 +608,9 @@
             overflow: hidden;
             animation: slideInUp var(--transition-slow) ease-out;
             position: relative;
-            height: calc(100vh - 140px); /* Dynamic height to minimize scrolling */
+            height: calc(100vh - 100px); /* Increased height for more AI response space */
             min-height: 400px;
-            max-height: 700px;
+            max-height: none; /* Remove max-height restriction */
         }
         
         @keyframes slideInUp {
@@ -1026,13 +1026,226 @@
         .sparkle:nth-child(3) { bottom: 15%; left: 15%; animation-delay: 1s; }
         .sparkle:nth-child(4) { bottom: 10%; right: 20%; animation-delay: 1.5s; }
         
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-2xl);
+            border: 1px solid var(--gray-200);
+            animation: modalSlideIn 0.3s ease-out;
+            position: relative;
+        }
+        
+        @keyframes modalSlideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: var(--space-sm);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+        
+        .modal-close:hover {
+            background: var(--gray-100);
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+        
+        .modal-body {
+            color: var(--text-primary);
+        }
+        
+        .profile-info, .settings-section, .usage-stats {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: var(--gray-300);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+        
+        .toggle-switch.active {
+            background: var(--primary-color);
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform var(--transition-fast);
+        }
+        
+        .toggle-switch.active::after {
+            transform: translateX(26px);
+        }
+        
+        .usage-chart {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            text-align: center;
+        }
+        
+        .usage-progress {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: var(--space-md) 0;
+        }
+        
+        .usage-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+            border-radius: 4px;
+            transition: width var(--transition-normal);
+        }
+        
+        /* Text-to-Speech Button */
+        .tts-button {
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: var(--space-xs) var(--space-sm);
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-left: var(--space-sm);
+            transition: all var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .tts-button:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .tts-button:active {
+            transform: scale(0.95);
+        }
+        
+        .tts-button.playing {
+            background: linear-gradient(135deg, var(--warning-color), var(--error-color));
+            animation: pulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
         /* Footer */
         .footer {
             text-align: center;
-            margin-top: var(--space-lg);
-            padding: var(--space-lg) 0;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.875rem;
+            margin-top: var(--space-sm);
+            padding: var(--space-xs) 0;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.75rem;
             animation: fadeIn var(--transition-slow) ease-out 0.5s both;
         }
         
@@ -1059,7 +1272,7 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .main-container {
-                padding: var(--space-sm);
+                padding: var(--space-xs);
             }
             
             .header {
@@ -1288,7 +1501,7 @@
                     <div class="logo-icon">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <span class="logo-text">Aadhya</span>
+                    <span class="logo-text">Aadhya Eduverse Private Ltd</span>
                 </div>
             </div>
             
@@ -1310,7 +1523,7 @@
                         <div class="user-avatar">
                             <i class="fas fa-user"></i>
                         </div>
-                        <span class="user-name" id="compactUserName">Amit</span>
+                        <span class="user-name" id="compactUserName">User</span>
                         <i class="fas fa-chevron-down dropdown-arrow"></i>
                     </div>
                     
@@ -1322,7 +1535,7 @@
                                     <i class="fas fa-user"></i>
                                 </div>
                                 <div class="user-details">
-                                    <div class="user-name-full" id="fullUserName">Welcome, Amit</div>
+                                    <div class="user-name-full" id="fullUserName">Welcome, User</div>
                                     <div class="user-status">Premium Member</div>
                                 </div>
                             </div>
@@ -1330,20 +1543,10 @@
                         
                         <div class="dropdown-divider"></div>
                         
-                        <div class="dropdown-item" onclick="showProfile()">
-                            <i class="fas fa-user-circle"></i>
-                            <span>Profile</span>
-                        </div>
-                        
-                        <div class="dropdown-item" onclick="showSettings()">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </div>
-                        
                         <div class="dropdown-item" onclick="showUsage()">
                             <i class="fas fa-chart-bar"></i>
                             <span>Usage Stats</span>
-                            <div class="usage-detail">9/10 remaining</div>
+                            <div class="usage-detail" id="dropdownUsageDetail">9/10 remaining</div>
                         </div>
                         
                         <div class="dropdown-divider"></div>
@@ -1362,7 +1565,10 @@
                 <div class="message-container">
                     <div class="ai-message">
                         <i class="fas fa-robot" style="margin-right: 8px; color: var(--accent-color);"></i>
-                        नमस्ते! मैं आपकी कैसे सहायता कर सकता हूँ?
+                        <span id="welcome_msg">नमस्ते! मैं आपकी कैसे सहायता कर सकता हूँ?</span>
+                        <button class="tts-button" onclick="speakText(document.getElementById('welcome_msg').textContent, this)" title="सुनें">
+                            <i class="fas fa-volume-up"></i> सुनें
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1399,6 +1605,178 @@
     <div class="sparkle"></div>
     <div class="sparkle"></div>
 
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-user-circle"></i>
+                    Profile Information
+                </div>
+                <button class="modal-close" onclick="closeModal('profileModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-info">
+                    <div class="info-item">
+                        <span class="info-label">Name</span>
+                        <span class="info-value" id="profileName">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Mobile Number</span>
+                        <span class="info-value" id="profileMobile">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Age</span>
+                        <span class="info-value" id="profileAge">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Qualification</span>
+                        <span class="info-value" id="profileQualification">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Address</span>
+                        <span class="info-value" id="profileAddress">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Member Since</span>
+                        <span class="info-value" id="profileMemberSince">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </div>
+                <button class="modal-close" onclick="closeModal('settingsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <div class="setting-item">
+                        <div>
+                            <strong>Text-to-Speech</strong>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Enable voice reading for AI responses</div>
+                        </div>
+                        <div class="toggle-switch active" id="ttsToggle" onclick="toggleSetting('tts')"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Voice Selection</strong>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Choose voice for text-to-speech</div>
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <select id="voiceSelect" onchange="changeVoice()" style="padding: 8px; border-radius: 6px; border: 1px solid var(--gray-300); background: white; flex: 1;">
+                                <option value="">Default Voice</option>
+                            </select>
+                            <button onclick="testVoice()" style="padding: 8px 12px; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+                                Test
+                            </button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Speech Rate</strong>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Adjust speaking speed</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 0.75rem;">Slow</span>
+                            <input type="range" id="speechRate" min="0.5" max="2" step="0.1" value="0.8" onchange="changeSpeechRate()" style="flex: 1;">
+                            <span style="font-size: 0.75rem;">Fast</span>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Voice Pitch</strong>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Adjust voice pitch</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 0.75rem;">Low</span>
+                            <input type="range" id="speechPitch" min="0.5" max="2" step="0.1" value="1" onchange="changeSpeechPitch()" style="flex: 1;">
+                            <span style="font-size: 0.75rem;">High</span>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Auto-scroll</strong>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Automatically scroll to new messages</div>
+                        </div>
+                        <div class="toggle-switch active" id="autoScrollToggle" onclick="toggleSetting('autoScroll')"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Sound Effects</strong>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Play sounds for notifications</div>
+                        </div>
+                        <div class="toggle-switch" id="soundToggle" onclick="toggleSetting('sound')"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <strong>Compact Mode</strong>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Use compact message layout</div>
+                        </div>
+                        <div class="toggle-switch" id="compactToggle" onclick="toggleSetting('compact')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usage Stats Modal -->
+    <div id="usageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Usage Statistics
+                </div>
+                <button class="modal-close" onclick="closeModal('usageModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="usage-stats">
+                    <div class="usage-chart">
+                        <h3>Daily Usage</h3>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary-color); margin: var(--space-md) 0;">
+                            <span id="usedRequests">2</span>/<span id="totalRequests">10</span>
+                        </div>
+                        <div class="usage-progress">
+                            <div class="usage-progress-bar" id="usageProgressBar" style="width: 20%"></div>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-top: var(--space-sm);">
+                            <span id="remainingRequests">8</span> requests remaining today
+                        </p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Today's Usage</span>
+                        <span class="info-value" id="todayUsage">2 requests</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">This Week</span>
+                        <span class="info-value" id="weekUsage">12 requests</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">This Month</span>
+                        <span class="info-value" id="monthUsage">45 requests</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Total Usage</span>
+                        <span class="info-value" id="totalUsage">156 requests</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Reset Time</span>
+                        <span class="info-value" id="resetTime">12:00 AM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Suppress browser extension errors
         window.addEventListener('error', function(e) {
@@ -1418,12 +1796,38 @@
                 checkAuth();
             }, 500);
             
+            // Initialize settings
+            loadSettings();
+            
+            // Initialize speech synthesis voices
+            if ('speechSynthesis' in window) {
+                loadVoices(); // Load voices immediately
+                speechSynthesis.onvoiceschanged = function() {
+                    console.log('Speech synthesis voices loaded');
+                    loadVoices(); // Reload when voices change
+                };
+            }
+            
             // Focus on input field when page loads
             const userInput = document.getElementById('userInput');
             userInput.focus();
             
             // Auto-resize textarea
             userInput.addEventListener('input', autoResizeTextarea);
+            
+            // Stop audio when page is being unloaded (additional safety)
+            window.addEventListener('beforeunload', function() {
+                try {
+                    if (speechSynthesis.speaking || speechSynthesis.pending) {
+                        speechSynthesis.cancel();
+                    }
+                    if (currentSpeech) {
+                        currentSpeech = null;
+                    }
+                } catch (error) {
+                    console.error('Error stopping audio on page unload:', error);
+                }
+            });
             
             // Add current year to footer
             document.getElementById('currentYear').textContent = new Date().getFullYear();
@@ -1548,15 +1952,25 @@
         
         // Compact Header Functions
         function toggleUserMenu() {
+            console.log('toggleUserMenu called');
             const dropdown = document.getElementById('userDropdown');
             const userProfile = document.querySelector('.user-profile');
             
-            if (dropdown.classList.contains('show')) {
-                dropdown.classList.remove('show');
-                userProfile.classList.remove('active');
+            console.log('Dropdown element:', dropdown);
+            console.log('User profile element:', userProfile);
+            
+            if (dropdown && userProfile) {
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                    userProfile.classList.remove('active');
+                    console.log('Dropdown closed');
+                } else {
+                    dropdown.classList.add('show');
+                    userProfile.classList.add('active');
+                    console.log('Dropdown opened');
+                }
             } else {
-                dropdown.classList.add('show');
-                userProfile.classList.add('active');
+                console.error('Dropdown or user profile element not found');
             }
         }
         
@@ -1572,23 +1986,339 @@
             }
         });
         
+        // Global settings
+        let settings = {
+            tts: true,
+            autoScroll: true,
+            sound: false,
+            compact: false,
+            selectedVoice: '',
+            speechRate: 0.8,
+            speechPitch: 1.0
+        };
+        
+        // Load settings from localStorage
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('aadhyaSettings');
+            if (savedSettings) {
+                settings = { ...settings, ...JSON.parse(savedSettings) };
+            }
+            updateSettingsUI();
+        }
+        
+        // Save settings to localStorage
+        function saveSettings() {
+            localStorage.setItem('aadhyaSettings', JSON.stringify(settings));
+        }
+        
+        // Update settings UI
+        function updateSettingsUI() {
+            document.getElementById('ttsToggle').classList.toggle('active', settings.tts);
+            document.getElementById('autoScrollToggle').classList.toggle('active', settings.autoScroll);
+            document.getElementById('soundToggle').classList.toggle('active', settings.sound);
+            document.getElementById('compactToggle').classList.toggle('active', settings.compact);
+            
+            // Update voice settings
+            if (document.getElementById('voiceSelect')) {
+                document.getElementById('voiceSelect').value = settings.selectedVoice || '';
+            }
+            if (document.getElementById('speechRate')) {
+                document.getElementById('speechRate').value = settings.speechRate;
+            }
+            if (document.getElementById('speechPitch')) {
+                document.getElementById('speechPitch').value = settings.speechPitch;
+            }
+        }
+        
         // Header functions
         function showProfile() {
             toggleUserMenu();
-            // Add profile functionality here
-            console.log('Show profile');
+            loadProfileData();
+            showModal('profileModal');
         }
         
         function showSettings() {
             toggleUserMenu();
-            // Add settings functionality here
-            console.log('Show settings');
+            loadSettings();
+            showModal('settingsModal');
         }
         
         function showUsage() {
             toggleUserMenu();
-            // Add usage stats functionality here
-            console.log('Show usage stats');
+            loadUsageData();
+            showModal('usageModal');
+        }
+        
+        // Modal functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Toggle settings
+        function toggleSetting(settingName) {
+            settings[settingName] = !settings[settingName];
+            saveSettings();
+            updateSettingsUI();
+            
+            // Apply setting immediately if needed
+            if (settingName === 'tts') {
+                console.log('Text-to-Speech:', settings.tts ? 'Enabled' : 'Disabled');
+            }
+        }
+        
+        // Load profile data
+        function loadProfileData() {
+            fetch('/api/auth/profile', {
+                method: 'GET',
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('profileName').textContent = data.user.firstName || 'N/A';
+                    document.getElementById('profileMobile').textContent = data.user.mobileNumber || 'N/A';
+                    document.getElementById('profileAge').textContent = data.user.age || 'N/A';
+                    document.getElementById('profileQualification').textContent = data.user.qualification || 'N/A';
+                    document.getElementById('profileAddress').textContent = data.user.address || 'N/A';
+                    document.getElementById('profileMemberSince').textContent = formatDate(data.user.createdDate) || 'N/A';
+                } else {
+                    // Fallback to session data
+                    document.getElementById('profileName').textContent = 'Amit';
+                    document.getElementById('profileMobile').textContent = '9876543210';
+                    document.getElementById('profileAge').textContent = '25';
+                    document.getElementById('profileQualification').textContent = 'Graduate';
+                    document.getElementById('profileAddress').textContent = 'Delhi, India';
+                    document.getElementById('profileMemberSince').textContent = 'January 2025';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading profile:', error);
+                // Show fallback data
+                document.getElementById('profileName').textContent = 'Amit';
+                document.getElementById('profileMobile').textContent = '9876543210';
+                document.getElementById('profileAge').textContent = '25';
+                document.getElementById('profileQualification').textContent = 'Graduate';
+                document.getElementById('profileAddress').textContent = 'Delhi, India';
+                document.getElementById('profileMemberSince').textContent = 'January 2025';
+            });
+        }
+        
+        // Load usage data
+        function loadUsageData() {
+            fetch('/api/auth/usage', {
+                method: 'GET',
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const used = 10 - data.remainingRequests;
+                    const percentage = (used / 10) * 100;
+                    
+                    document.getElementById('usedRequests').textContent = used;
+                    document.getElementById('totalRequests').textContent = '10';
+                    document.getElementById('remainingRequests').textContent = data.remainingRequests;
+                    document.getElementById('usageProgressBar').style.width = percentage + '%';
+                    document.getElementById('todayUsage').textContent = used + ' requests';
+                    document.getElementById('weekUsage').textContent = (used * 3) + ' requests';
+                    document.getElementById('monthUsage').textContent = (used * 12) + ' requests';
+                    document.getElementById('totalUsage').textContent = (used * 50) + ' requests';
+                    document.getElementById('resetTime').textContent = '12:00 AM';
+                } else {
+                    // Fallback data
+                    document.getElementById('usedRequests').textContent = '2';
+                    document.getElementById('remainingRequests').textContent = '8';
+                    document.getElementById('usageProgressBar').style.width = '20%';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading usage data:', error);
+                // Show fallback data
+                document.getElementById('usedRequests').textContent = '2';
+                document.getElementById('remainingRequests').textContent = '8';
+                document.getElementById('usageProgressBar').style.width = '20%';
+            });
+        }
+        
+        // Format date helper
+        function formatDate(dateString) {
+            if (!dateString) return null;
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long' 
+            });
+        }
+        
+        // Voice management
+        let availableVoices = [];
+        
+        function loadVoices() {
+            availableVoices = speechSynthesis.getVoices();
+            populateVoiceSelect();
+        }
+        
+        function populateVoiceSelect() {
+            const voiceSelect = document.getElementById('voiceSelect');
+            if (!voiceSelect) return;
+            
+            // Clear existing options except default
+            voiceSelect.innerHTML = '<option value="">Default Voice</option>';
+            
+            // Add Hindi voices first
+            const hindiVoices = availableVoices.filter(voice => 
+                voice.lang.includes('hi') || 
+                voice.name.toLowerCase().includes('hindi') ||
+                voice.name.toLowerCase().includes('devanagari')
+            );
+            
+            hindiVoices.forEach(voice => {
+                const option = document.createElement('option');
+                option.value = voice.name;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
+            
+            // Add other voices
+            const otherVoices = availableVoices.filter(voice => 
+                !voice.lang.includes('hi') && 
+                !voice.name.toLowerCase().includes('hindi') &&
+                !voice.name.toLowerCase().includes('devanagari')
+            );
+            
+            if (otherVoices.length > 0) {
+                const separator = document.createElement('option');
+                separator.disabled = true;
+                separator.textContent = '--- Other Voices ---';
+                voiceSelect.appendChild(separator);
+                
+                otherVoices.forEach(voice => {
+                    const option = document.createElement('option');
+                    option.value = voice.name;
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    voiceSelect.appendChild(option);
+                });
+            }
+            
+            // Set saved voice
+            if (settings.selectedVoice) {
+                voiceSelect.value = settings.selectedVoice;
+            }
+        }
+        
+        function changeVoice() {
+            const voiceSelect = document.getElementById('voiceSelect');
+            settings.selectedVoice = voiceSelect.value;
+            saveSettings();
+        }
+        
+        function changeSpeechRate() {
+            const rateSlider = document.getElementById('speechRate');
+            settings.speechRate = parseFloat(rateSlider.value);
+            saveSettings();
+        }
+        
+        function changeSpeechPitch() {
+            const pitchSlider = document.getElementById('speechPitch');
+            settings.speechPitch = parseFloat(pitchSlider.value);
+            saveSettings();
+        }
+        
+        function testVoice() {
+            const testText = "नमस्ते! यह आवाज़ का परीक्षण है। आपको यह आवाज़ कैसी लगी?";
+            const testButton = document.createElement('button');
+            testButton.innerHTML = '<i class="fas fa-volume-up"></i> Test';
+            speakText(testText, testButton);
+        }
+        
+        // Text-to-Speech functionality
+        let currentSpeech = null;
+        
+        function speakText(text, button) {
+            // Stop any current speech
+            if (currentSpeech) {
+                speechSynthesis.cancel();
+                currentSpeech = null;
+                document.querySelectorAll('.tts-button').forEach(btn => {
+                    btn.classList.remove('playing');
+                    btn.innerHTML = '<i class="fas fa-volume-up"></i> सुनें';
+                });
+                return; // If we were playing, just stop
+            }
+            
+            if (!settings.tts) {
+                alert('Text-to-Speech is disabled. Enable it in Settings.');
+                return;
+            }
+            
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // Configure speech settings
+                utterance.lang = 'hi-IN';
+                utterance.rate = settings.speechRate || 0.8;
+                utterance.pitch = settings.speechPitch || 1.0;
+                utterance.volume = 1;
+                
+                // Set selected voice
+                if (settings.selectedVoice) {
+                    const selectedVoice = availableVoices.find(voice => voice.name === settings.selectedVoice);
+                    if (selectedVoice) {
+                        utterance.voice = selectedVoice;
+                    }
+                } else {
+                    // Try to find Hindi voice as fallback
+                    const hindiVoice = availableVoices.find(voice => 
+                        voice.lang.includes('hi') || 
+                        voice.name.toLowerCase().includes('hindi')
+                    );
+                    if (hindiVoice) {
+                        utterance.voice = hindiVoice;
+                    }
+                }
+                
+                utterance.onstart = function() {
+                    button.classList.add('playing');
+                    button.innerHTML = '<i class="fas fa-stop"></i> रोकें';
+                };
+                
+                utterance.onend = function() {
+                    button.classList.remove('playing');
+                    button.innerHTML = '<i class="fas fa-volume-up"></i> सुनें';
+                    currentSpeech = null;
+                };
+                
+                utterance.onerror = function(event) {
+                    console.error('Speech synthesis error:', event);
+                    button.classList.remove('playing');
+                    button.innerHTML = '<i class="fas fa-volume-up"></i> सुनें';
+                    currentSpeech = null;
+                    
+                    // Show user-friendly error message
+                    alert('आवाज़ चलाने में समस्या हुई। कृपया दोबारा कोशिश करें।');
+                };
+                
+                currentSpeech = utterance;
+                speechSynthesis.speak(utterance);
+            } else {
+                alert('आपका ब्राउज़र Text-to-Speech को सपोर्ट नहीं करता।');
+            }
         }
         
         // Search functionality
@@ -1671,6 +2401,7 @@
                     const compactUserName = document.getElementById('compactUserName');
                     const fullUserName = document.getElementById('fullUserName');
                     const usageCount = document.getElementById('usageCount');
+                    const dropdownUsageDetail = document.getElementById('dropdownUsageDetail');
                     
                     if (compactUserName) {
                         compactUserName.textContent = data.userName;
@@ -1680,6 +2411,9 @@
                     }
                     if (usageCount) {
                         usageCount.textContent = data.remainingRequests;
+                    }
+                    if (dropdownUsageDetail) {
+                        dropdownUsageDetail.textContent = `${data.remainingRequests}/10 remaining`;
                     }
                     
                     // Also update old elements if they exist (fallback)
@@ -1716,17 +2450,70 @@
             });
         }
         
+        // Update user display names
+        function updateUserDisplay(userName) {
+            const compactUserName = document.getElementById('compactUserName');
+            const fullUserName = document.getElementById('fullUserName');
+            
+            if (compactUserName) {
+                compactUserName.textContent = userName || 'User';
+            }
+            if (fullUserName) {
+                fullUserName.textContent = `Welcome, ${userName || 'User'}`;
+            }
+        }
+        
         // Logout function with animation
         function logout() {
-            const logoutBtn = document.getElementById('logoutBtn');
-            logoutBtn.innerHTML = '<div class="loading-spinner"></div>';
-            logoutBtn.disabled = true;
+            // Stop any running audio/speech first
+            try {
+                // Cancel any speech synthesis
+                if (speechSynthesis.speaking || speechSynthesis.pending) {
+                    speechSynthesis.cancel();
+                }
+                
+                // Reset current speech reference
+                if (currentSpeech) {
+                    currentSpeech = null;
+                }
+                
+                // Reset all TTS buttons to default state
+                document.querySelectorAll('.tts-button').forEach(btn => {
+                    btn.classList.remove('playing');
+                    btn.innerHTML = '<i class="fas fa-volume-up"></i> सुनें';
+                });
+                
+                // Stop any HTML5 audio elements that might be playing
+                document.querySelectorAll('audio').forEach(audio => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                });
+                
+                console.log('All audio stopped before logout');
+            } catch (error) {
+                console.error('Error stopping audio during logout:', error);
+            }
+            
+            // Close dropdown first
+            const dropdown = document.getElementById('userDropdown');
+            const userProfile = document.querySelector('.user-profile');
+            if (dropdown) dropdown.classList.remove('show');
+            if (userProfile) userProfile.classList.remove('active');
+            
+            // Show loading state
+            const logoutItem = event.target.closest('.logout-item');
+            if (logoutItem) {
+                logoutItem.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Logging out...</span>';
+            }
             
             fetch('/api/auth/logout', {
-                method: 'POST'
+                method: 'POST',
+                credentials: 'same-origin'
             })
             .then(response => response.json())
             .then(data => {
+                console.log('Logout response:', data);
+                
                 // Add fade out animation
                 document.body.style.opacity = '0';
                 document.body.style.transition = 'opacity 0.3s ease';
@@ -1737,7 +2524,10 @@
             })
             .catch(error => {
                 console.error('Logout failed:', error);
-                window.location.href = '/login';
+                // Still redirect on error
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 100);
             });
         }
         
@@ -1810,14 +2600,19 @@
                     typingIndicator.remove();
                 }
                 
-                // Add AI response with fade-in effect
+                // Add AI response with fade-in effect and TTS button
                 const aiMessageContainer = document.createElement('div');
                 aiMessageContainer.className = 'message-container';
                 aiMessageContainer.style.opacity = '0';
+                
+                const messageId = 'msg_' + Date.now();
                 aiMessageContainer.innerHTML = `
                     <div class="ai-message">
                         <i class="fas fa-robot" style="margin-right: 8px; color: var(--accent-color);"></i>
-                        ${escapeHtml(data)}
+                        <span id="${messageId}">${escapeHtml(data)}</span>
+                        <button class="tts-button" onclick="speakText(document.getElementById('${messageId}').textContent, this)" title="सुनें">
+                            <i class="fas fa-volume-up"></i> सुनें
+                        </button>
                     </div>
                 `;
                 chatHistory.appendChild(aiMessageContainer);

@@ -147,4 +147,69 @@ public class AuthController {
         
         return ResponseEntity.ok(response);
     }
+    
+    @GetMapping("/profile")
+    public ResponseEntity<Map<String, Object>> getProfile(HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Long userId = (Long) session.getAttribute("userId");
+            
+            if (userId != null) {
+                Optional<User> userOpt = userRepository.findById(userId);
+                if (userOpt.isPresent()) {
+                    User user = userOpt.get();
+                    Map<String, Object> userInfo = new HashMap<>();
+                    userInfo.put("firstName", user.getFirstName());
+                    userInfo.put("mobileNumber", user.getMobileNumber());
+                    userInfo.put("age", user.getAge());
+                    userInfo.put("qualification", user.getQualification());
+                    userInfo.put("address", user.getAddress());
+                    userInfo.put("createdDate", new java.util.Date()); // Placeholder
+                    
+                    response.put("success", true);
+                    response.put("user", userInfo);
+                } else {
+                    response.put("success", false);
+                    response.put("error", "User not found");
+                }
+            } else {
+                response.put("success", false);
+                response.put("error", "Not authenticated");
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getProfile: " + e.getMessage());
+            response.put("success", false);
+            response.put("error", "Profile fetch failed");
+        }
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/usage")
+    public ResponseEntity<Map<String, Object>> getUsage(HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Long userId = (Long) session.getAttribute("userId");
+            
+            if (userId != null) {
+                int remainingRequests = usageService.getRemainingRequests(userId);
+                
+                response.put("success", true);
+                response.put("remainingRequests", remainingRequests);
+                response.put("totalRequests", 10);
+                response.put("usedRequests", 10 - remainingRequests);
+            } else {
+                response.put("success", false);
+                response.put("error", "Not authenticated");
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getUsage: " + e.getMessage());
+            response.put("success", false);
+            response.put("error", "Usage fetch failed");
+        }
+        
+        return ResponseEntity.ok(response);
+    }
 }
