@@ -131,9 +131,9 @@ public class DailyHistoryService {
         String dateStr = date.format(DateTimeFormatter.ofPattern("d MMMM", new Locale("hi", "IN")));
         
         return "Tell me in a story form why " + dateStr + " is important in Indian history, " +
-               "as if you're explaining it to a 10-year-old child. The language should be simple, " +
+               "as if you're explaining it to a 20-year-old child. The language should be simple, " +
                "emotional, and memorable. Let it flow like a poem — with a touch of love, a sense of pride, " +
-               "and warmth like a grandma or big brother telling a bedtime story. Make it so touching and " +
+               "and warmth like an scholar telling a bedtime story. Make it so touching and " +
                "beautiful that I never forget it for the rest of my life. Please respond in Hindi (Devanagari script).";
     }
     
