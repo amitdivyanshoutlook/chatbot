@@ -44,14 +44,20 @@ class AadhyaUI {
     // Ripple Effect
     setupRippleEffect() {
         document.addEventListener('click', (e) => {
-            if (e.target.matches('button, .btn, .ripple')) {
+            if (e.target.matches('button, .btn, .ripple, .today-history-btn')) {
                 this.createRipple(e);
             }
         });
     }
 
     createRipple(event) {
-        const button = event.currentTarget;
+        const button = event.target;
+        
+        // Safety check to ensure it's a DOM element
+        if (!button || typeof button.getBoundingClientRect !== 'function') {
+            return;
+        }
+        
         const ripple = document.createElement('span');
         const rect = button.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height);

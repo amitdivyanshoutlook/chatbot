@@ -1,7 +1,11 @@
 package com.perplexity.perplexity.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.perplexity.perplexity.model.User;
 import com.perplexity.perplexity.service.PerplexityService;
 import com.perplexity.perplexity.service.UsageService;
+import com.perplexity.perplexity.service.UserService;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +23,17 @@ public class ChatController {
     @Autowired
     private UsageService usageService;
 
+    @Autowired
+    private UserService userService;
+    
+
+
     public ChatController(PerplexityService service) {
         this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<String> chat(@RequestBody String userPrompt, HttpSession session) {
+    public ResponseEntity<String> chat(@RequestBody String userPrompt, HttpSession session) throws JsonProcessingException {
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
             return ResponseEntity.status(401).body("Please login to continue");
@@ -37,9 +46,10 @@ public class ChatController {
         
         // Increment usage count
         usageService.incrementUsage(userId);
-        
+        User user = userService.getUserById(userId);
         // Get response from AI
-        String response = service.fetchReply(userPrompt);
+        String response = service.fetchReply(userPrompt, user);
+        
         
         // Add remaining requests info
         int remaining = usageService.getRemainingRequests(userId);
