@@ -5,11 +5,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perplexity.perplexity.model.*;
 import okhttp3.*;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class PerplexityService {
@@ -18,17 +19,28 @@ public class PerplexityService {
     private static final String API_KEY = "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";
     private final OkHttpClient client = new OkHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
+    private final TranslateService translateService;
+    private final MessageSource messageSource;
 
-    @Value("${aadhya.eduverse.prompt:}")
-    private String prompt;
+    public PerplexityService(TranslateService translateService, MessageSource messageSource) {
+        this.translateService = translateService;
+        this.messageSource = messageSource;
+    }
 
-    public String fetchReply(String userInput) {
-
-
-        Message userMessage = new Message("user",prompt+" "+ userInput);
-        RequestPayload payload = new RequestPayload("sonar-pro", List.of(userMessage));
+    public String fetchReply(String userInput, String lang) {
 
         try {
+            Locale locale = new Locale(lang);
+            String prompt = messageSource.getMessage("prompt.text", null, locale);
+
+            if ("hi".equals(lang)) {
+                userInput = translateService.translate(userInput, "hi", "en");
+                prompt = translateService.translate(prompt, "hi", "en");
+            }
+
+            Message userMessage = new Message("user", prompt + " " + userInput);
+            RequestPayload payload = new RequestPayload("sonar-pro", List.of(userMessage));
+
             String jsonBody = mapper.writeValueAsString(payload);
 
             Request request = new Request.Builder()
@@ -60,6 +72,9 @@ public class PerplexityService {
 
 
                     if (cleaned != null) {
+                        if ("hi".equals(lang)) {
+                            return translateService.translate(cleaned, "en", "hi");
+                        }
                         return cleaned;
                     }
                 }

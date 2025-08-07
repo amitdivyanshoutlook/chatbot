@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Aadhya Eduverse AI Chat</title>
+    <title th:text="#{app.title}">Aadhya Eduverse AI Chat</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,6 +53,7 @@
             margin-bottom: 15px;
             flex: 0 0 auto;
             padding: 10px 0;
+            position: relative;
         }
         
         .company-logo {
@@ -170,6 +171,25 @@
             flex: 0 0 auto;
             padding: 5px 0;
         }
+
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+
+        .language-selector a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 5px;
+        }
+
+        .language-selector a:hover {
+            text-decoration: underline;
+        }
         
         /* Mobile responsiveness */
         @media (max-width: 768px) {
@@ -208,6 +228,11 @@
             .footer {
                 font-size: 0.7rem;
             }
+
+            .language-selector {
+                top: 10px;
+                right: 10px;
+            }
         }
 
     </style>
@@ -215,18 +240,21 @@
 <body>
     <div class="main-container">
         <div class="header">
-            <div class="company-logo">Aadhya Eduverse</div>
-            <div class="company-tagline">Empowering Education Through Innovation</div>
+            <div class="language-selector">
+                <a href="?lang=en">English</a> | <a href="?lang=hi">हिन्दी</a>
+            </div>
+            <div class="company-logo" th:text="#{company.name}">Aadhya Eduverse</div>
+            <div class="company-tagline" th:text="#{company.tagline}">Empowering Education Through Innovation</div>
         </div>
         
         <div class="chat-container">
             <div class="chat-history" id="chatHistory">
-                <div class="ai-message">नमस्ते! मैं आपकी कैसे सहायता कर सकता हूँ?</div>
+                <div class="ai-message" th:text="#{chat.welcome}">Hello! How can I assist you today?</div>
             </div>
             
             <div class="input-area">
-                <textarea id="userInput" placeholder="अपना संदेश यहां टाइप करें..."></textarea>
-                <button onclick="sendMessage()">Send <i class="fas fa-paper-plane"></i></button>
+                <textarea id="userInput" th:placeholder="#{chat.placeholder}" placeholder="Type your message here..."></textarea>
+                <button onclick="sendMessage()"><span th:text="#{chat.send}">Send</span> <i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
         
@@ -235,110 +263,94 @@
         </div>
     </div>
 
-    <script>
-        // Initialize when document is ready
-        document.addEventListener('DOMContentLoaded', function() {
-            // Focus on input field when page loads
-            document.getElementById('userInput').focus();
-            
-            // Add current year to footer
-            document.querySelector('.footer').innerHTML = 
-                `&copy; ${new Date().getFullYear()} Aadhya Eduverse Private Limited. All rights reserved.`;
-        });
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+        const chatThinking = /*[[#{chat.thinking}]]*/ 'Thinking';
+        const chatError = /*[[#{chat.error}]]*/ 'Error: Could not get response';
+        let currentLang = /*[[${#locale.language}]]*/ 'en';
+    /*]]>*/
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('userInput').focus();
         
-        // Send message function
-        function sendMessage() {
-            const userInput = document.getElementById('userInput');
-            const chatHistory = document.getElementById('chatHistory');
+        const footer = document.querySelector('.footer');
+        const currentYear = new Date().getFullYear();
+        footer.innerHTML = `&copy; ${currentYear} Aadhya Eduverse Private Limited. All rights reserved.`;
+    });
+
+    function sendMessage() {
+        const userInput = document.getElementById('userInput');
+        const chatHistory = document.getElementById('chatHistory');
+
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        const userDiv = document.createElement('div');
+        userDiv.className = 'user-message';
+        userDiv.textContent = message;
+        chatHistory.appendChild(userDiv);
+
+        userInput.value = '';
+        userInput.focus();
+
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'ai-message';
+        loadingDiv.innerHTML = `<span style="display:inline-block">${chatThinking}</span><span class="dots">...</span>`;
+        chatHistory.appendChild(loadingDiv);
+
+        let dotsCount = 0;
+        const dotsAnimation = setInterval(() => {
+            const dots = loadingDiv.querySelector('.dots');
+            dotsCount = (dotsCount + 1) % 4;
+            dots.textContent = '.'.repeat(dotsCount || 1);
+        }, 500);
+
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+
+        fetch('/api/chat?lang=' + currentLang, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain'
+            },
+            body: message
+        })
+        .then(response => response.text())
+        .then(data => {
+            clearInterval(dotsAnimation);
+            chatHistory.removeChild(loadingDiv);
             
-            const message = userInput.value.trim();
-            if (!message) return;
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'ai-message';
+            aiDiv.style.opacity = '0';
+            aiDiv.textContent = data;
+            chatHistory.appendChild(aiDiv);
             
-            // Add user message
-            const userDiv = document.createElement('div');
-            userDiv.className = 'user-message';
-            userDiv.textContent = message;
-            chatHistory.appendChild(userDiv);
+            setTimeout(() => {
+                aiDiv.style.transition = 'opacity 0.5s ease';
+                aiDiv.style.opacity = '1';
+            }, 10);
             
-            // Clear input and focus
-            userInput.value = '';
-            userInput.focus();
-            
-            // Add loading message with animation
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'ai-message';
-            loadingDiv.innerHTML = '<span style="display:inline-block">सोच रहा हूँ</span><span class="dots">...</span>';
-            chatHistory.appendChild(loadingDiv);
-            
-            // Animate the dots
-            let dotsCount = 0;
-            const dotsAnimation = setInterval(() => {
-                const dots = loadingDiv.querySelector('.dots');
-                dotsCount = (dotsCount + 1) % 4;
-                dots.textContent = '.'.repeat(dotsCount || 1);
-            }, 500);
-            
-            // Scroll to bottom
             chatHistory.scrollTop = chatHistory.scrollHeight;
+        })
+        .catch(error => {
+            clearInterval(dotsAnimation);
+            chatHistory.removeChild(loadingDiv);
             
-            // Send to API
-            fetch('/api/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain'
-                },
-                body: message
-            })
-            .then(function(response) {
-                return response.text();
-            })
-            .then(function(data) {
-                // Clear animation
-                clearInterval(dotsAnimation);
-                
-                // Remove loading message
-                chatHistory.removeChild(loadingDiv);
-                
-                // Add AI response with fade-in effect
-                const aiDiv = document.createElement('div');
-                aiDiv.className = 'ai-message';
-                aiDiv.style.opacity = '0';
-                aiDiv.textContent = data;
-                chatHistory.appendChild(aiDiv);
-                
-                // Fade in the message
-                setTimeout(() => {
-                    aiDiv.style.transition = 'opacity 0.5s ease';
-                    aiDiv.style.opacity = '1';
-                }, 10);
-                
-                // Scroll to bottom
-                chatHistory.scrollTop = chatHistory.scrollHeight;
-            })
-            .catch(function(error) {
-                // Clear animation
-                clearInterval(dotsAnimation);
-                
-                // Remove loading message
-                chatHistory.removeChild(loadingDiv);
-                
-                // Add error message
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'ai-message';
-                errorDiv.innerHTML = '<span style="color:#e74c3c"><i class="fas fa-exclamation-circle"></i> Error: Could not get response</span>';
-                chatHistory.appendChild(errorDiv);
-                
-                console.error('Error:', error);
-            });
-        }
-        
-        // Enter key handler
-        document.getElementById('userInput').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'ai-message';
+            errorDiv.innerHTML = `<span style="color:#e74c3c"><i class="fas fa-exclamation-circle"></i> ${chatError}</span>`;
+            chatHistory.appendChild(errorDiv);
+
+            console.error('Error:', error);
         });
+    }
+
+    document.getElementById('userInput').addEventListener('keydown', function(e) {.
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
     </script>
 </body>
 </html>
