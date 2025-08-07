@@ -337,6 +337,39 @@
             50% { transform: scale(1.05); }
         }
         
+        .language-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            color: white;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            backdrop-filter: blur(10px);
+            margin-left: var(--space-xs);
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 60px;
+        }
+        
+        .language-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .language-toggle-btn.english {
+            background: linear-gradient(135deg, var(--accent-color), #0891b2);
+        }
+        
+        .language-toggle-btn.hindi {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+        }
+
         .today-history-btn {
             display: flex;
             align-items: center;
@@ -1628,6 +1661,12 @@
                         <span id="usageCount">9</span>
                     </div>
                     
+                    <!-- Language Toggle Button -->
+                    <button class="language-toggle-btn" onclick="toggleLanguage()" title="Switch Language">
+                        <i class="fas fa-language"></i>
+                        <span id="currentLanguage">हिं</span>
+                    </button>
+                    
                     <button class="today-history-btn ripple" onclick="showTodaysHistory()" title="Today's History">
                         <i class="fas fa-calendar-day"></i>
                     </button>
@@ -1913,6 +1952,9 @@
             
             // Initialize settings
             loadSettings();
+            
+            // Initialize language preference
+            initializeLanguage();
             
             // Initialize speech synthesis voices
             if ('speechSynthesis' in window) {
@@ -2646,6 +2688,57 @@
             });
         }
         
+        // Language toggle functionality
+        let currentLanguage = localStorage.getItem('preferredLanguage') || 'hindi';
+        
+        function initializeLanguage() {
+            const languageBtn = document.querySelector('.language-toggle-btn');
+            const currentLanguageSpan = document.getElementById('currentLanguage');
+            const welcomeMsg = document.getElementById('welcome_msg');
+            const userInput = document.getElementById('userInput');
+            
+            if (currentLanguage === 'english') {
+                languageBtn.classList.add('english');
+                languageBtn.classList.remove('hindi');
+                currentLanguageSpan.textContent = 'EN';
+                welcomeMsg.textContent = 'Hello! How can I help you?';
+                userInput.placeholder = 'Type your message here...';
+            } else {
+                languageBtn.classList.add('hindi');
+                languageBtn.classList.remove('english');
+                currentLanguageSpan.textContent = 'हिं';
+                welcomeMsg.textContent = 'नमस्ते! मैं आपकी कैसे सहायता कर सकता हूँ?';
+                userInput.placeholder = 'अपना संदेश यहां टाइप करें...';
+            }
+        }
+        
+        function toggleLanguage() {
+            const languageBtn = document.querySelector('.language-toggle-btn');
+            const currentLanguageSpan = document.getElementById('currentLanguage');
+            const userInput = document.getElementById('userInput');
+            
+            console.log('Current language before toggle:', currentLanguage);
+            
+            if (currentLanguage === 'hindi') {
+                currentLanguage = 'english';
+                languageBtn.classList.add('english');
+                languageBtn.classList.remove('hindi');
+                currentLanguageSpan.textContent = 'EN';
+                userInput.placeholder = 'Type your message here...';
+            } else {
+                currentLanguage = 'hindi';
+                languageBtn.classList.add('hindi');
+                languageBtn.classList.remove('english');
+                currentLanguageSpan.textContent = 'हिं';
+                userInput.placeholder = 'अपना संदेश यहां टाइप करें...';
+            }
+            
+            console.log('Current language after toggle:', currentLanguage);
+            
+            // Save preference to localStorage
+            localStorage.setItem('preferredLanguage', currentLanguage);
+        }
+        
         // Send message function with enhanced animations
         function sendMessage() {
             const userInput = document.getElementById('userInput');
@@ -2678,10 +2771,11 @@
             const typingContainer = document.createElement('div');
             typingContainer.className = 'message-container';
             typingContainer.id = 'typingIndicator';
+            const thinkingText = currentLanguage === 'english' ? 'Thinking' : 'सोच रहा हूँ';
             typingContainer.innerHTML = `
                 <div class="typing-indicator">
                     <i class="fas fa-robot" style="margin-right: 8px; color: var(--accent-color);"></i>
-                    <span style="margin-right: 8px;">सोच रहा हूँ</span>
+                    <span style="margin-right: 8px;">${thinkingText}</span>
                     <div class="typing-dots">
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
@@ -2694,13 +2788,19 @@
             // Smooth scroll to bottom
             smoothScrollToBottom(chatHistory);
             
-            // Send to API
-            fetch('/api/chat', {
+            // Send to API with language preference
+            console.log('Sending message with language:', currentLanguage);
+            console.log('Request payload:', { message: message, language: currentLanguage });
+            
+            fetch('/api/chat/v2', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'text/plain'
+                    'Content-Type': 'application/json'
                 },
-                body: message
+                body: JSON.stringify({
+                    message: message,
+                    language: currentLanguage
+                })
             })
             .then(response => {
                 if (!response.ok) {

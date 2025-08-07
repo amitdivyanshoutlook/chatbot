@@ -95,7 +95,7 @@ public class DailyHistoryService {
             String prompt = createHistoryPrompt(date);
             
             // Get response from AI (using a dummy user for system calls)
-            String response = perplexityService.fetchReplyForSystem(prompt);
+            String response = perplexityService.fetchReplyForSystem(prompt, "hindi");
             
             // Debug logging
             System.out.println("AI Response received: " + (response != null ? response.substring(0, Math.min(100, response.length())) + "..." : "null"));

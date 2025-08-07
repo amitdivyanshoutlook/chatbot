@@ -22,9 +22,9 @@ public class PerplexityService {
     @Value("${aadhya.eduverse.prompt:}")
     private String prompt;
 
-    public String fetchReply(String userInput,  User user) throws JsonMappingException, JsonProcessingException {
+    public String fetchReply(String userInput, User user, String language) throws JsonMappingException, JsonProcessingException {
         int age = user.getAge();
-        Message userMessage = new Message("user", buildPromptWithAge(age)+" "+ userInput);
+        Message userMessage = new Message("user", buildPromptWithAge(age, language) + " " + userInput);
         RequestPayload payload = new RequestPayload("sonar-pro", List.of(userMessage));
         int maxRetries = 3;
         
@@ -105,9 +105,9 @@ public class PerplexityService {
         return "Failed to get valid response after " + maxRetries + " attempts";
     }
     
-    public String fetchReplyForSystem(String userInput) throws JsonMappingException, JsonProcessingException {
+    public String fetchReplyForSystem(String userInput, String language) throws JsonMappingException, JsonProcessingException {
         // System call without user context - use default age-appropriate prompt
-        Message userMessage = new Message("user", buildSystemPrompt() + " " + userInput);
+        Message userMessage = new Message("user", buildSystemPrompt(language) + " " + userInput);
         RequestPayload payload = new RequestPayload("sonar-pro", List.of(userMessage));
         int maxRetries = 3;
         
@@ -188,24 +188,44 @@ public class PerplexityService {
         return "Failed to get valid system response after " + maxRetries + " attempts";
     }
     
-    private String buildSystemPrompt() {
-        return "Please explain any concept in a simple and heartfelt way. First, give a clear and direct answer (in Devanagari/Hindi script). " +
-                "Then, explain it like you're talking to a 10-year-old Indian student who speaks only Hindi at home. " +
-                "Don't use boring, classroom-style language – speak like an elder brother, father, or grandmother would. " +
-                "Use a real or imagined story or daily life example if needed. Blend Hindi and English naturally, like real conversations in Indian homes. " +
-                "Avoid technical jargon or complicated definitions. Always keep the response in Hindi script and under 300 words. " +
-                "The goal is not just to understand the concept, but to feel it deeply. " +
-                "If the question is simple, skip the analogy and just give a clear explanation.";
+    private String buildSystemPrompt(String language) {
+        if ("english".equalsIgnoreCase(language)) {
+            return "Please explain any concept in a simple and clear way. Give a direct answer in English. " +
+                    "Explain it like you're talking to a 10-year-old student in a friendly manner. " +
+                    "Don't use boring, classroom-style language – speak like a helpful teacher or mentor would. " +
+                    "Use real-life examples or analogies if needed to make the concept clear. " +
+                    "Avoid technical jargon or complicated definitions. Keep the response under 300 words. " +
+                    "The goal is to make the concept easy to understand and remember. " +
+                    "If the question is simple, just give a clear and concise explanation.";
+        } else {
+            return "Please explain any concept in a simple and heartfelt way. First, give a clear and direct answer (in Devanagari/Hindi script). " +
+                    "Then, explain it like you're talking to a 10-year-old Indian student who speaks only Hindi at home. " +
+                    "Don't use boring, classroom-style language – speak like an elder brother, father, or grandmother would. " +
+                    "Use a real or imagined story or daily life example if needed. Blend Hindi and English naturally, like real conversations in Indian homes. " +
+                    "Avoid technical jargon or complicated definitions. Always keep the response in Hindi script and under 300 words. " +
+                    "The goal is not just to understand the concept, but to feel it deeply. " +
+                    "If the question is simple, skip the analogy and just give a clear explanation.";
+        }
     }
 
-    private String buildPromptWithAge(int age) {
-        return "Please explain any concept in a simple and heartfelt way. First, give a clear and direct answer (in Devanagari/Hindi script). " +
-                "Then, explain it like you're talking to a " + age + "-year-old Indian student who speaks only Hindi at home. " +
+    private String buildPromptWithAge(int age, String language) {
+        if ("english".equalsIgnoreCase(language)) {
+            return "Please explain any concept in a simple and clear way. Give a direct answer in English. " +
+                    "Explain it like you're talking to a " + age + "-year-old student in a friendly manner. " +
+                    "Don't use boring, classroom-style language – speak like a helpful teacher or mentor would. " +
+                    "Use real-life examples or analogies if needed to make the concept clear and age-appropriate. " +
+                    "Avoid technical jargon or complicated definitions. Keep the response under 200 words. " +
+                    "The goal is to make the concept easy to understand and remember for a " + age + "-year-old. " +
+                    "If the question is simple, just give a clear and concise explanation.";
+        } else {
+            return "Please explain any concept in a simple and heartfelt way. First, give a clear and direct answer (in Devanagari/Hindi script). " +
+                    "Then, explain it like you're talking to a " + age + "-year-old Indian student who speaks only Hindi at home. " +
                 "Don’t use boring, classroom-style language – speak like an scholar explaining the things " +
                 "Use a real life analogy if needed. Blend Hindi and English naturally, like real conversations in Indian homes. " +
                 "Avoid technical jargon or complicated definitions. Always keep the response in Hindi script and under 200 words. " +
                 "The goal is not just to understand the concept, but to feel it deeply. " +
                 "If the question is simple, skip the analogy and just give a clear explanation.";
+        }
     }
 
 }
