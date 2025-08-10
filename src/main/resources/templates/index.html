@@ -374,27 +374,59 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             color: white;
             cursor: pointer;
             transition: all var(--transition-fast);
             backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            position: relative;
+            font-size: 16px;
             margin-left: var(--space-xs);
         }
         
         .today-history-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
         }
         
         .today-history-btn.active {
-            background: var(--warning-color);
+            background: linear-gradient(135deg, #b45309, #92400e);
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+        }
+
+        /* Tooltip for Today's History Button */
+        .today-history-btn::after {
+            content: "Today's History";
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-fast);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .today-history-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+            bottom: -40px;
         }
         
         .user-profile {
@@ -1667,7 +1699,7 @@
                         <span id="currentLanguage">हिं</span>
                     </button>
                     
-                    <button class="today-history-btn ripple" onclick="showTodaysHistory()" title="Today's History">
+                    <button class="today-history-btn ripple" onclick="showTodaysHistory()">
                         <i class="fas fa-calendar-day"></i>
                     </button>
                     
@@ -3002,7 +3034,7 @@
         let todaysHistoryData = null;
         let todaysHistorySpeech = null;
         
-        // Show today's history in chat area
+        // Show today's history directly in chat area (no popup)
         function showTodaysHistory() {
             const todayBtn = document.querySelector('.today-history-btn');
             const chatHistory = document.getElementById('chatHistory');
@@ -3016,7 +3048,7 @@
             loadingContainer.style.opacity = '0';
             loadingContainer.innerHTML = `
                 <div class="ai-message">
-                    <i class="fas fa-robot" style="margin-right: 8px; color: var(--accent-color);"></i>
+                    <i class="fas fa-calendar-day" style="margin-right: 8px; color: var(--warning-color);"></i>
                     <span>
                         <i class="fas fa-spinner fa-spin"></i>
                         आज का इतिहास लोड हो रहा है...
@@ -3074,9 +3106,6 @@
                         // Smooth scroll to bottom
                         smoothScrollToBottom(chatHistory);
                         
-                        // Show success notification
-                        showNotification('आज का इतिहास लोड हो गया!', 'success');
-                        
                     } else {
                         // Show error message in chat
                         const errorContainer = document.createElement('div');
@@ -3085,7 +3114,7 @@
                         errorContainer.innerHTML = `
                             <div class="ai-message error">
                                 <i class="fas fa-exclamation-triangle" style="margin-right: 8px; color: var(--error-color);"></i>
-                                <span>आज का इतिहास लोड नहीं हो सका। कृपया बाद में कोशिश करें।</span>
+                                <span>आज का इतिहास उपलब्ध नहीं है। कृपया बाद में कोशिश करें।</span>
                             </div>
                         `;
                         
@@ -3098,7 +3127,6 @@
                         }, 10);
                         
                         smoothScrollToBottom(chatHistory);
-                        showNotification('आज का इतिहास लोड नहीं हो सका', 'error');
                     }
                 })
                 .catch(error => {
@@ -3114,7 +3142,7 @@
                     errorContainer.innerHTML = `
                         <div class="ai-message error">
                             <i class="fas fa-exclamation-triangle" style="margin-right: 8px; color: var(--error-color);"></i>
-                            <span>कनेक्शन में समस्या है। कृपया अपना इंटरनेट कनेक्शन चेक करें और दोबारा कोशिश करें।</span>
+                            <span>आज का इतिहास लोड करने में समस्या हुई। कृपया दोबारा कोशिश करें।</span>
                         </div>
                     `;
                     
@@ -3127,11 +3155,12 @@
                     }, 10);
                     
                     smoothScrollToBottom(chatHistory);
-                    showNotification('कनेक्शन में समस्या है', 'error');
                 })
                 .finally(() => {
                     // Remove active state from button
-                    todayBtn.classList.remove('active');
+                    setTimeout(() => {
+                        todayBtn.classList.remove('active');
+                    }, 500);
                 });
         }
         

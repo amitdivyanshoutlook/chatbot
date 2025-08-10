@@ -35,7 +35,7 @@ public class DailyHistoryService {
             DailyHistory history = existingHistory.get();
             
             // Check if content is corrupted (contains question marks indicating encoding issues)
-            if (history.getContent() != null && (history.getContent().contains("???") || history.getContent().contains("?"))) {
+            if (history.getContent() != null && (history.getContent().contains("???") )) {
                 System.out.println("Detected corrupted content, regenerating...");
                 // Delete corrupted entry and regenerate
                 dailyHistoryRepository.delete(history);
