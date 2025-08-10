@@ -25,4 +25,13 @@ public class WebController {
     public String register() {
         return "register";
     }
+    
+    @GetMapping("/career-guidance")
+    public String careerGuidance(HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
+        return "career-guidance";
+    }
 }

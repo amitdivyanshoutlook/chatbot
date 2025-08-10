@@ -584,6 +584,17 @@
             border-radius: var(--radius-sm);
         }
         
+        .feature-badge {
+            margin-left: auto;
+            font-size: 10px;
+            color: white;
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+        
         .logout-item {
             color: var(--error-color) !important;
             border-top: 1px solid var(--gray-200);
@@ -1733,6 +1744,12 @@
                             <div class="usage-detail" id="dropdownUsageDetail">9/10 remaining</div>
                         </div>
                         
+                        <div class="dropdown-item" onclick="openCareerGuidance()">
+                            <i class="fas fa-compass"></i>
+                            <span>Career Guidance</span>
+                            <div class="feature-badge">New</div>
+                        </div>
+                        
                         <div class="dropdown-divider"></div>
                         
                         <div class="dropdown-item logout-item" onclick="logout()">
@@ -2650,6 +2667,11 @@
             if (fullUserName) {
                 fullUserName.textContent = `Welcome, ${userName || 'User'}`;
             }
+        }
+        
+        // Career Guidance function
+        function openCareerGuidance() {
+            window.location.href = '/career-guidance';
         }
         
         // Logout function with animation
