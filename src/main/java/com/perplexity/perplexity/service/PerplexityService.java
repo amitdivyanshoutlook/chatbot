@@ -10,13 +10,19 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class PerplexityService {
 
     private static final String API_URL = "https://api.perplexity.ai/chat/completions";
     private static final String API_KEY = "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";
-    private final OkHttpClient client = new OkHttpClient();
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .callTimeout(60, TimeUnit.SECONDS)
+            .build();
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${aadhya.eduverse.prompt:}")
@@ -87,6 +93,18 @@ public class PerplexityService {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 return "Request interrupted";
+            } catch (java.net.SocketTimeoutException e) {
+                if (attempt < maxRetries) {
+                    System.out.println("Timeout on attempt " + attempt + "/" + maxRetries + ": " + e.getMessage());
+                    try {
+                        Thread.sleep(2000 * attempt); // Longer wait for timeout
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return "Request interrupted";
+                    }
+                    continue;
+                }
+                return "Request timed out after " + maxRetries + " attempts. Please try again with a simpler query.";
             } catch (Exception e) {
                 if (attempt < maxRetries) {
                     System.out.println("Exception on attempt " + attempt + "/" + maxRetries + ": " + e.getMessage());
@@ -170,6 +188,18 @@ public class PerplexityService {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 return "Request interrupted";
+            } catch (java.net.SocketTimeoutException e) {
+                if (attempt < maxRetries) {
+                    System.out.println("System timeout on attempt " + attempt + "/" + maxRetries + ": " + e.getMessage());
+                    try {
+                        Thread.sleep(2000 * attempt); // Longer wait for timeout
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return "Request interrupted";
+                    }
+                    continue;
+                }
+                return "System request timed out after " + maxRetries + " attempts. Please try again with a simpler query.";
             } catch (Exception e) {
                 if (attempt < maxRetries) {
                     System.out.println("System exception on attempt " + attempt + "/" + maxRetries + ": " + e.getMessage());

@@ -628,6 +628,9 @@
                 <div class="loading-text">
                     Getting your personalized career guidance<span class="loading-dots"></span>
                 </div>
+                <div class="loading-subtext" style="font-size: 0.9rem; color: #718096; margin-top: 0.5rem;">
+                    This may take up to 60 seconds for comprehensive results
+                </div>
             </div>
 
             <!-- Response Container -->
@@ -814,7 +817,11 @@
             })
             .catch(error => {
                 hideLoading();
-                showAlert('Error: ' + error.message, 'error');
+                if (error.message.includes('timeout') || error.message.includes('timed out')) {
+                    showAlert('Request timed out. Please try with a simpler qualification or check your internet connection.', 'warning');
+                } else {
+                    showAlert('Error: ' + error.message, 'error');
+                }
             });
         });
 
