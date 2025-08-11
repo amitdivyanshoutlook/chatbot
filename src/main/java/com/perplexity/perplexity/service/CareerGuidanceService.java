@@ -50,7 +50,7 @@ public class CareerGuidanceService {
 
             prompt.append("Provide: ")
                     .append("1) Top 5 career paths; ")
-                    .append("2) Best 3 institutions (national/international); ")
+                    .append("2) Best 5 institutions (national/international); ")
                     .append("3) Key skills needed; ")
                     .append("4) Salary range; ")
                     .append("5) Next steps. ")
@@ -91,9 +91,9 @@ public class CareerGuidanceService {
                 prompt.append(" focusing on ").append(preferredField);
             }
             
-            prompt.append(". Provide in 250 words: ")
+            prompt.append(". Provide in 300 words: ")
                     .append("1) Top 3 career paths ")
-                    .append("2) Best 2 institutions ")
+                    .append("2) Best 5 institutions ")
                     .append("3) Key skills ")
                     .append("4) Salary range ")
                     .append("5) Next step. ")
@@ -108,9 +108,9 @@ public class CareerGuidanceService {
                 prompt.append(", क्षेत्र: ").append(preferredField);
             }
             
-            prompt.append("। 250 शब्दों में दें: ")
+            prompt.append("। 300 शब्दों में दें: ")
                     .append("1) शीर्ष 3 करियर ")
-                    .append("2) सर्वोत्तम 2 संस्थान ")
+                    .append("2) सर्वोत्तम 5 संस्थान ")
                     .append("3) मुख्य कौशल ")
                     .append("4) वेतन ")
                     .append("5) अगला कदम। ")
