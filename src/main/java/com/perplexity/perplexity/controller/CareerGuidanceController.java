@@ -176,7 +176,7 @@ public class CareerGuidanceController {
         );
     }
 
-    @PostMapping("/guidance/system")
+/*    @PostMapping("/guidance/system")
     public ResponseEntity<String> getSystemCareerGuidance(@RequestBody CareerGuidanceRequest request) throws JsonProcessingException {
         System.out.println("=== SYSTEM CAREER GUIDANCE REQUEST ===");
         System.out.println("Qualification: " + request.getQualification());
@@ -194,5 +194,5 @@ public class CareerGuidanceController {
         );
         
         return ResponseEntity.ok(response);
-    }
+    }*/
 }
