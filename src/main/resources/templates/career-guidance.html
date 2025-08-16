@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Guidance - Perplexity</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-light: #718096;
+            --bg-light: #f7fafc;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: var(--primary-gradient);
+            overflow: hidden;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* Compact Facebook-like Header */
+        .compact-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.3s ease-out;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Header Left - Logo */
+        .header-left {
+            display: flex;
+            align-items: center;
+            min-width: 200px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 0.75rem;
+            transition: all 0.15s;
+        }
+        
+        .logo-container:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: scale(1.02);
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            animation: logoSpin 3s ease-in-out infinite;
+        }
+        
+        @keyframes logoSpin {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(5deg) scale(1.05); }
+        }
+        
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Header Center - Search */
+        .header-center {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+        
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 8px 16px 8px 40px;
+            border: none;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 9999px;
+            font-size: 14px;
+            color: #111827;
+            transition: all 0.15s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            background: rgba(99, 102, 241, 0.15);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            transform: scale(1.02);
+        }
+        
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
+            transition: all 0.15s;
+        }
+        
+        .search-input:focus + .search-icon {
+            color: #6366f1;
+        }
+        
+        /* Header Right - User Menu */
+        .header-right {
+            display: flex;
+            align-items: center;
+            min-width: 200px;
+            justify-content: flex-end;
+        }
+        
+        .user-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .usage-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .language-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.75rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.15s;
+            backdrop-filter: blur(10px);
+            margin-left: 0.25rem;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 60px;
+        }
+        
+        .language-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .language-toggle-btn.english {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+        }
+        
+        .language-toggle-btn.hindi {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .today-history-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            transition: all 0.15s;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            position: relative;
+            font-size: 16px;
+            margin-left: 0.25rem;
+        }
+        
+        .today-history-btn:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .today-history-btn.active {
+            background: linear-gradient(135deg, #b45309, #92400e);
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+        }
+
+        /* Tooltip for Today's History Button */
+        .today-history-btn::after {
+            content: "Today's History";
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.15s;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .today-history-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+            bottom: -40px;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .user-profile:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .dropdown-arrow {
+            font-size: 10px;
+            color: #9ca3af;
+            transition: transform 0.15s;
+        }
+        
+        .user-profile.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+        
+        /* User Dropdown */
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border: 1px solid #e5e7eb;
+            min-width: 280px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.15s;
+            z-index: 1001;
+        }
+        
+        .user-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .user-info-full {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar-large {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+        
+        .user-details {
+            flex: 1;
+        }
+        
+        .user-name-full {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+        
+        .user-status {
+            font-size: 12px;
+            color: #4b5563;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 500;
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 8px 0;
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+        }
+        
+        .dropdown-item:hover {
+            background: #f9fafb;
+            transform: translateX(4px);
+        }
+        
+        .dropdown-item i {
+            width: 16px;
+            color: #4b5563;
+            font-size: 14px;
+        }
+        
+        .dropdown-item span {
+            font-size: 14px;
+            color: #111827;
+            font-weight: 500;
+        }
+        
+        .usage-detail {
+            margin-left: auto;
+            font-size: 12px;
+            color: #9ca3af;
+            background: #f3f4f6;
+            padding: 2px 8px;
+            border-radius: 0.375rem;
+        }
+        
+        .feature-badge {
+            margin-left: auto;
+            font-size: 10px;
+            color: white;
+            background: linear-gradient(135deg, #10b981, #059669);
+            padding: 2px 6px;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+        
+        .logout-item {
+            color: #ef4444 !important;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 8px;
+        }
+        
+        .logout-item:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .logout-item i,
+        .logout-item span {
+            color: #ef4444 !important;
+        }
+        
+        /* Mobile Responsive Header */
+        @media (max-width: 768px) {
+            .compact-header {
+                padding: 8px 12px;
+                height: 52px;
+            }
+            
+            .header-left {
+                min-width: auto;
+            }
+            
+            .logo-text {
+                display: none;
+            }
+            
+            .logo-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+            
+            .header-center {
+                margin: 0 12px;
+                max-width: none;
+            }
+            
+            .search-input {
+                font-size: 16px; /* Prevent zoom on iOS */
+                padding: 6px 12px 6px 36px;
+            }
+            
+            .search-icon {
+                left: 12px;
+            }
+            
+            .header-right {
+                min-width: auto;
+            }
+            
+            .user-name {
+                display: none;
+            }
+            
+            .user-dropdown {
+                right: -8px;
+                min-width: 260px;
+            }
+            
+            .usage-badge {
+                padding: 3px 6px;
+                font-size: 11px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-center {
+                display: none;
+            }
+            
+            .compact-header {
+                justify-content: space-between;
+            }
+        }
+
+        /* Main Container */
+        .career-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .hero-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            font-weight: 400;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .hero-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* Main Card */
+        .career-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: var(--shadow-xl);
+            padding: 3rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .career-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Form Styling */
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .qualification-container {
+            position: relative;
+        }
+
+        .qualification-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .qualification-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .qualification-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .qualification-option {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .qualification-option:hover {
+            background: #f8fafc;
+            color: var(--primary-color);
+        }
+
+        .qualification-option:last-child {
+            border-bottom: none;
+        }
+
+        .qualification-option.highlighted {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .form-control, .form-select {
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 16px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-gradient);
+            border: none;
+            border-radius: 16px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Loading Animation */
+        .loading-container {
+            display: none;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        /* Response Container */
+        .response-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border-left: 5px solid var(--primary-color);
+            box-shadow: var(--shadow-lg);
+            display: none;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .response-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .response-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--success-gradient);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .response-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .response-text {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 1rem;
+            white-space: pre-wrap;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .career-container {
+                padding: 1rem 0.5rem;
+            }
+
+            .career-card {
+                padding: 1.5rem;
+                border-radius: 20px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero-icon {
+                font-size: 3rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .qualification-input,
+            .form-control,
+            .form-select {
+                padding: 0.875rem 1.25rem;
+            }
+
+            .btn-primary {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .qualification-dropdown {
+                max-height: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .career-card {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Utility Classes */
+        .text-gradient {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <div class="main-container">
+        <!-- Compact Facebook-like Header -->
+        <div class="compact-header">
+            <div class="header-left">
+                <a th:href="@{/}" style="text-decoration:none; color:inherit;">Aadhya Eduverse Private Ltd
+
+                </a>
+            </div>
+            
+
+            
+            <div class="header-right">
+                <div class="user-menu">
+
+                    
+                    <!-- Dropdown Menu -->
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="user-info-full">
+                                <div class="user-avatar-large">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="user-details">
+                                    <div class="user-name-full" id="fullUserName">Welcome, User</div>
+                                    <div class="user-status">Premium Member</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="dropdown-divider"></div>
+                        
+
+                        
+                        <div class="dropdown-item" onclick="openCareerGuidance()">
+                            <i class="fas fa-compass"></i>
+                            <span>Career Guidance</span>
+                            <div class="feature-badge">New</div>
+                        </div>
+                        
+                        <div class="dropdown-divider"></div>
+                        
+                        <div class="dropdown-item logout-item" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="career-container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-icon">
+                <i class="fas fa-rocket"></i>
+            </div>
+            <h1 class="hero-title">Career Guidance</h1>
+            <p class="hero-subtitle">Discover your perfect career path with AI-powered guidance tailored to your qualifications and interests</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="career-card">
+            <form id="careerForm">
+                <!-- Qualification Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        Current Qualification
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="qualification" class="form-label">
+                            <i class="fas fa-search me-2"></i>Search or select your qualification
+                        </label>
+                        <div class="qualification-container">
+                            <input type="text" class="qualification-input" id="qualification" 
+                                   placeholder="Start typing your qualification..." 
+                                   autocomplete="off" required>
+                            <div class="qualification-dropdown" id="qualificationDropdown"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Information Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        Additional Information
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="language" class="form-label">
+                                    <i class="fas fa-language me-2"></i>Preferred Language
+                                </label>
+                                <select class="form-select" id="language">
+                                    <option value="hindi">हिंदी (Hindi)</option>
+                                    <option value="english">English</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="interests" class="form-label">
+                                    <i class="fas fa-heart me-2"></i>Your Interests (Optional)
+                                </label>
+                                <input type="text" class="form-control" id="interests" 
+                                       placeholder="e.g., Technology, Arts, Sports">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="preferredField" class="form-label">
+                                    <i class="fas fa-bullseye me-2"></i>Preferred Field (Optional)
+                                </label>
+                                <input type="text" class="form-control" id="preferredField" 
+                                       placeholder="e.g., IT, Healthcare, Finance">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Section -->
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket me-2"></i>Get My Career Guidance
+                    </button>
+                </div>
+            </form>
+
+            <!-- Loading Animation -->
+            <div class="loading-container" id="loadingContainer">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">
+                    Getting your personalized career guidance<span class="loading-dots"></span>
+                </div>
+                <div class="loading-subtext" style="font-size: 0.9rem; color: #718096; margin-top: 0.5rem;">
+                    This may take up to 60 seconds for comprehensive results
+                </div>
+            </div>
+
+            <!-- Response Container -->
+            <div class="response-container" id="responseContainer">
+                <div class="response-header">
+                    <div class="response-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="response-title">Your Career Guidance</div>
+                </div>
+                <div class="response-text" id="responseText"></div>
+            </div>
+        </div>
+    </div> <!-- Close main-container -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let qualifications = [];
+        let filteredQualifications = [];
+        let selectedIndex = -1;
+
+        // Load qualifications on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadQualifications();
+            setupQualificationSearch();
+        });
+
+        async function loadQualifications() {
+            try {
+                const response = await fetch('/api/career/qualifications');
+                qualifications = await response.json();
+                filteredQualifications = [...qualifications];
+            } catch (error) {
+                console.error('Error loading qualifications:', error);
+            }
+        }
+
+        function setupQualificationSearch() {
+            const qualificationInput = document.getElementById('qualification');
+            const dropdown = document.getElementById('qualificationDropdown');
+
+            qualificationInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                
+                if (query.length === 0) {
+                    hideDropdown();
+                    return;
+                }
+
+                filteredQualifications = qualifications.filter(qual => 
+                    qual.toLowerCase().includes(query)
+                );
+
+                if (filteredQualifications.length > 0) {
+                    showDropdown();
+                } else {
+                    hideDropdown();
+                }
+                
+                selectedIndex = -1;
+            });
+
+            qualificationInput.addEventListener('keydown', function(e) {
+                const dropdown = document.getElementById('qualificationDropdown');
+                const options = dropdown.querySelectorAll('.qualification-option');
+
+                switch(e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        selectedIndex = Math.min(selectedIndex + 1, options.length - 1);
+                        updateSelection();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        selectedIndex = Math.max(selectedIndex - 1, -1);
+                        updateSelection();
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (selectedIndex >= 0 && options[selectedIndex]) {
+                            selectQualification(options[selectedIndex].textContent);
+                        }
+                        break;
+                    case 'Escape':
+                        hideDropdown();
+                        break;
+                }
+            });
+
+            qualificationInput.addEventListener('focus', function() {
+                if (this.value.trim().length > 0 && filteredQualifications.length > 0) {
+                    showDropdown();
+                }
+            });
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!qualificationInput.contains(e.target) && !dropdown.contains(e.target)) {
+                    hideDropdown();
+                }
+            });
+        }
+
+        function showDropdown() {
+            const dropdown = document.getElementById('qualificationDropdown');
+            dropdown.innerHTML = '';
+            
+            filteredQualifications.slice(0, 10).forEach((qual, index) => {
+                const option = document.createElement('div');
+                option.className = 'qualification-option';
+                option.textContent = qual;
+                option.addEventListener('click', () => selectQualification(qual));
+                dropdown.appendChild(option);
+            });
+
+            dropdown.style.display = 'block';
+        }
+
+        function hideDropdown() {
+            document.getElementById('qualificationDropdown').style.display = 'none';
+            selectedIndex = -1;
+        }
+
+        function updateSelection() {
+            const options = document.querySelectorAll('.qualification-option');
+            options.forEach((option, index) => {
+                option.classList.toggle('highlighted', index === selectedIndex);
+            });
+
+            if (selectedIndex >= 0 && options[selectedIndex]) {
+                options[selectedIndex].scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        function selectQualification(qualification) {
+            document.getElementById('qualification').value = qualification;
+            hideDropdown();
+        }
+
+        // Form submission
+        document.getElementById('careerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const qualification = document.getElementById('qualification').value.trim();
+            const language = document.getElementById('language').value;
+            const interests = document.getElementById('interests').value.trim();
+            const preferredField = document.getElementById('preferredField').value.trim();
+            
+            if (!qualification) {
+                showAlert('Please enter your qualification', 'warning');
+                return;
+            }
+
+            showLoading();
+            hideResponse();
+
+            const requestData = {
+                qualification: qualification,
+                language: language,
+                interests: interests || null,
+                preferredField: preferredField || null
+            };
+
+            fetch('/api/career/guidance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
+                if (response.status === 429) {
+                    throw new Error('Daily usage limit exhausted. Please try again tomorrow.');
+                }
+                return response.text();
+            })
+            .then(data => {
+                hideLoading();
+                showResponse(data);
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Career guidance error:', error);
+                if (error.message.includes('timeout') || error.message.includes('timed out')) {
+                    showAlert('Request timed out. Please try with a simpler qualification or check your internet connection.', 'warning');
+                } else if (error.message.includes('Failed to fetch')) {
+                    showAlert('Connection failed. This may be due to network issues or SSL certificate problems on mobile devices. Try refreshing the page or contact support.', 'error');
+                } else if (error.name === 'TypeError' && error.message.includes('NetworkError')) {
+                    showAlert('Network error occurred. Please check your internet connection and SSL certificate acceptance.', 'error');
+                } else {
+                    showAlert('Error: ' + error.message, 'error');
+                }
+            });
+        });
+
+        function showLoading() {
+            document.getElementById('loadingContainer').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingContainer').style.display = 'none';
+        }
+
+        function showResponse(data) {
+            document.getElementById('responseText').textContent = data;
+            document.getElementById('responseContainer').style.display = 'block';
+            document.getElementById('responseContainer').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        function hideResponse() {
+            document.getElementById('responseContainer').style.display = 'none';
+        }
+
+        function showAlert(message, type = 'info') {
+            // Create a modern alert
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'info'} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Header functionality
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            const userProfile = document.querySelector('.user-profile');
+            
+            dropdown.classList.toggle('show');
+            userProfile.classList.toggle('active');
+        }
+
+        function openCareerGuidance() {
+            window.location.href = '/career-guidance';
+        }
+
+        function showUsage() {
+            // Placeholder for usage stats functionality
+            alert('Usage stats feature coming soon!');
+        }
+
+        function showTodaysHistory() {
+            // Placeholder for today's history functionality
+            alert("Today's history feature coming soon!");
+        }
+
+        function toggleLanguage() {
+            // Placeholder for language toggle functionality
+            alert('Language toggle feature coming soon!');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.querySelector('.user-menu');
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (userMenu && !userMenu.contains(event.target)) {
+                dropdown.classList.remove('show');
+                document.querySelector('.user-profile').classList.remove('active');
+            }
+        });
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/api/auth/logout', {
+                    method: 'POST'
+                }).then(() => {
+                    window.location.href = '/login';
+                });
+            }
+        }
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to form elements
+            const formElements = document.querySelectorAll('.form-control, .form-select, .qualification-input');
+            formElements.forEach(element => {
+                element.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-2px)';
+                });
+                
+                element.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

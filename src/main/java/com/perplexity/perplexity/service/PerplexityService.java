@@ -10,67 +10,252 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class PerplexityService {
 
     private static final String API_URL = "https://api.perplexity.ai/chat/completions";
     private static final String API_KEY = "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";
-    private final OkHttpClient client = new OkHttpClient();
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .callTimeout(60, TimeUnit.SECONDS)
+            .build();
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${aadhya.eduverse.prompt:}")
     private String prompt;
 
-    public String fetchReply(String userInput) {
-
-
-        Message userMessage = new Message("user",prompt+" "+ userInput);
+    public String fetchReply(String userInput, User user, String language) throws JsonMappingException, JsonProcessingException {
+        int age = user.getAge();
+        Message userMessage = new Message("user", buildPromptWithAge(age, language) + " " + userInput);
         RequestPayload payload = new RequestPayload("sonar-pro", List.of(userMessage));
-
-        try {
-            String jsonBody = mapper.writeValueAsString(payload);
-
-            Request request = new Request.Builder()
-                    .url(API_URL)
-                    .post(RequestBody.create(jsonBody, MediaType.get("application/json")))
-                    .addHeader("Authorization", "Bearer " + API_KEY)
-                    .addHeader("Accept", "application/json")
-                    .build();
-
-            Response response = client.newCall(request).execute();
-
-            if (!response.isSuccessful()) {
-                return "Error: " + response.code() + " - " + response.message();
-            }
-            String responseBody = response.body().string();
-            System.out.println(responseBody+ " response");
-            ResponsePayload responsePayload = mapper.readValue(responseBody, ResponsePayload.class);
-            if (responsePayload.getChoices() == null || responsePayload.getChoices().isEmpty()) {
-                return "No response from the model.";
-            }
-           
-            // Find the first text content
-            for (ResponsePayload.Choice choice : responsePayload.getChoices()) {
-                Message messageContent = choice.getMessage();
-                if (messageContent != null) {
-                    String content = messageContent.getContent();
-                    // Remove markdown footnotes like [1], [2], etc.
-                    String cleaned = content.replaceAll("\\[\\d+\\]", "").replaceAll("\\*\\*(.*?)\\*\\*", "$1");
-
-
-                    if (cleaned != null) {
-                        return cleaned;
+        int maxRetries = 3;
+        
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                String jsonBody = mapper.writeValueAsString(payload);
+                
+                Request request = new Request.Builder()
+                        .url(API_URL)
+                        .post(RequestBody.create(jsonBody, MediaType.get("application/json; charset=utf-8")))
+                        .addHeader("Authorization", "Bearer " + API_KEY)
+                        .addHeader("Accept", "application/json")
+                        .addHeader("Content-Type", "application/json; charset=utf-8")
+                        .build();
+                
+                Response response = client.newCall(request).execute();
+                
+                if (!response.isSuccessful()) {
+                    if (attempt < maxRetries) {
+                        System.out.println("API call failed (attempt " + attempt + "/" + maxRetries + "): " + response.code());
+                        Thread.sleep(1000 * attempt); // Exponential backoff
+                        continue;
+                    }
+                    return "Error: " + response.code() + " - " + response.message() + " (Failed after " + maxRetries + " attempts)";
+                }
+                
+                String responseBody = new String(response.body().bytes(), java.nio.charset.StandardCharsets.UTF_8);
+                System.out.println("API call successful on attempt " + attempt);
+                
+                ResponsePayload responsePayload = mapper.readValue(responseBody, ResponsePayload.class);
+                if (responsePayload.getChoices() == null || responsePayload.getChoices().isEmpty()) {
+                    if (attempt < maxRetries) {
+                        System.out.println("Empty response (attempt " + attempt + "/" + maxRetries + ")");
+                        Thread.sleep(1000 * attempt);
+                        continue;
+                    }
+                    return "No response from the model after " + maxRetries + " attempts.";
+                }
+                
+                // Find the first text content
+                for (ResponsePayload.Choice choice : responsePayload.getChoices()) {
+                    Message messageContent = choice.getMessage();
+                    if (messageContent != null) {
+                        String content = messageContent.getContent();
+                        String cleaned = content.replaceAll("\\[\\d+\\]", "").replaceAll("\\*\\*(.*?)\\*\\*", "$1");
+                        
+                        if (cleaned != null && !cleaned.trim().isEmpty()) {
+                            return cleaned;
+                        }
                     }
                 }
+                
+                // If we reach here, no valid content found
+                if (attempt < maxRetries) {
+                    System.out.println("No valid content found (attempt " + attempt + "/" + maxRetries + ")");
+                    Thread.sleep(1000 * attempt);
+                    continue;
+                }
+                
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return "Request interrupted";
+            } catch (java.net.SocketTimeoutException e) {
+                if (attempt < maxRetries) {
+                    System.out.println("Timeout on attempt " + attempt + "/" + maxRetries + ": " + e.getMessage());
+                    try {
+                        Thread.sleep(2000 * attempt); // Longer wait for timeout
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return "Request interrupted";
+                    }
+                    continue;
+                }
+                return "Request timed out after " + maxRetries + " attempts. Please try again with a simpler query.";
+            } catch (Exception e) {
+                if (attempt < maxRetries) {
+                    System.out.println("Exception on attempt " + attempt + "/" + maxRetries + ": " + e.getMessage());
+                    try {
+                        Thread.sleep(1000 * attempt);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return "Request interrupted";
+                    }
+                    continue;
+                }
+                return "API call failed after " + maxRetries + " attempts: " + e.getMessage();
             }
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-        return null;
+        
+        return "Failed to get valid response after " + maxRetries + " attempts";
     }
+    
+    public String fetchReplyForSystem(String userInput, String language) throws JsonMappingException, JsonProcessingException {
+        // System call without user context - use default age-appropriate prompt
+        Message userMessage = new Message("user", buildSystemPrompt(language) + " " + userInput);
+        RequestPayload payload = new RequestPayload("sonar-pro", List.of(userMessage));
+        int maxRetries = 3;
+        
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                String jsonBody = mapper.writeValueAsString(payload);
+                
+                Request request = new Request.Builder()
+                        .url(API_URL)
+                        .post(RequestBody.create(jsonBody, MediaType.get("application/json; charset=utf-8")))
+                        .addHeader("Authorization", "Bearer " + API_KEY)
+                        .addHeader("Accept", "application/json")
+                        .addHeader("Content-Type", "application/json; charset=utf-8")
+                        .build();
+                
+                Response response = client.newCall(request).execute();
+                
+                if (!response.isSuccessful()) {
+                    if (attempt < maxRetries) {
+                        System.out.println("System API call failed (attempt " + attempt + "/" + maxRetries + "): " + response.code());
+                        Thread.sleep(1000 * attempt);
+                        continue;
+                    }
+                    return "Error: " + response.code() + " - " + response.message() + " (Failed after " + maxRetries + " attempts)";
+                }
+                
+                String responseBody = new String(response.body().bytes(), java.nio.charset.StandardCharsets.UTF_8);
+                System.out.println("System API call successful on attempt " + attempt);
+                
+                ResponsePayload responsePayload = mapper.readValue(responseBody, ResponsePayload.class);
+                if (responsePayload.getChoices() == null || responsePayload.getChoices().isEmpty()) {
+                    if (attempt < maxRetries) {
+                        System.out.println("Empty system response (attempt " + attempt + "/" + maxRetries + ")");
+                        Thread.sleep(1000 * attempt);
+                        continue;
+                    }
+                    return "No response from the model after " + maxRetries + " attempts.";
+                }
+                
+                // Find the first text content
+                for (ResponsePayload.Choice choice : responsePayload.getChoices()) {
+                    Message messageContent = choice.getMessage();
+                    if (messageContent != null) {
+                        String content = messageContent.getContent();
+                        String cleaned = content.replaceAll("\\[\\d+\\]", "").replaceAll("\\*\\*(.*?)\\*\\*", "$1");
+                        
+                        if (cleaned != null && !cleaned.trim().isEmpty()) {
+                            return cleaned;
+                        }
+                    }
+                }
+                
+                // If we reach here, no valid content found
+                if (attempt < maxRetries) {
+                    System.out.println("No valid system content found (attempt " + attempt + "/" + maxRetries + ")");
+                    Thread.sleep(1000 * attempt);
+                    continue;
+                }
+                
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return "Request interrupted";
+            } catch (java.net.SocketTimeoutException e) {
+                if (attempt < maxRetries) {
+                    System.out.println("System timeout on attempt " + attempt + "/" + maxRetries + ": " + e.getMessage());
+                    try {
+                        Thread.sleep(2000 * attempt); // Longer wait for timeout
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return "Request interrupted";
+                    }
+                    continue;
+                }
+                return "System request timed out after " + maxRetries + " attempts. Please try again with a simpler query.";
+            } catch (Exception e) {
+                if (attempt < maxRetries) {
+                    System.out.println("System exception on attempt " + attempt + "/" + maxRetries + ": " + e.getMessage());
+                    try {
+                        Thread.sleep(1000 * attempt);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return "Request interrupted";
+                    }
+                    continue;
+                }
+                return "System API call failed after " + maxRetries + " attempts: " + e.getMessage();
+            }
+        }
+        
+        return "Failed to get valid system response after " + maxRetries + " attempts";
+    }
+    
+    private String buildSystemPrompt(String language) {
+        if ("english".equalsIgnoreCase(language)) {
+            return "Please explain any concept in a simple and clear way. Give a direct answer in English. " +
+                    "Explain it like you're talking to a 10-year-old student in a friendly manner. " +
+                    "Don't use boring, classroom-style language – speak like a helpful teacher or mentor would. " +
+                    "Use real-life examples or analogies if needed to make the concept clear. " +
+                    "Avoid technical jargon or complicated definitions. Keep the response under 300 words. " +
+                    "The goal is to make the concept easy to understand and remember. " +
+                    "If the question is simple, just give a clear and concise explanation.";
+        } else {
+            return "Please explain any concept in a simple and heartfelt way. First, give a clear and direct answer (in Devanagari/Hindi script). " +
+                    "Then, explain it like you're talking to a 10-year-old Indian student who speaks only Hindi at home. " +
+                    "Don't use boring, classroom-style language – speak like an elder brother, father, or grandmother would. " +
+                    "Use a real or imagined story or daily life example if needed. Blend Hindi and English naturally, like real conversations in Indian homes. " +
+                    "Avoid technical jargon or complicated definitions. Always keep the response in Hindi script and under 300 words. " +
+                    "The goal is not just to understand the concept, but to feel it deeply. " +
+                    "If the question is simple, skip the analogy and just give a clear explanation.";
+        }
+    }
+
+    private String buildPromptWithAge(int age, String language) {
+        if ("english".equalsIgnoreCase(language)) {
+            return "Please explain any concept in a simple and clear way. Give a direct answer in English. " +
+                    "Explain it like you're talking to a " + age + "-year-old student in a friendly manner. " +
+                    "Don't use boring, classroom-style language – speak like a helpful teacher or mentor would. " +
+                    "Use real-life examples or analogies if needed to make the concept clear and age-appropriate. " +
+                    "Avoid technical jargon or complicated definitions. Keep the response under 200 words. " +
+                    "The goal is to make the concept easy to understand and remember for a " + age + "-year-old. " +
+                    "If the question is simple, just give a clear and concise explanation.";
+        } else {
+            return "Please explain any concept in a simple and heartfelt way. First, give a clear and direct answer (in Devanagari/Hindi script). " +
+                    "Then, explain it like you're talking to a " + age + "-year-old Indian student who speaks only Hindi at home. " +
+                "Don’t use boring, classroom-style language – speak like an scholar explaining the things " +
+                "Use a real life analogy if needed. Blend Hindi and English naturally, like real conversations in Indian homes. " +
+                "Avoid technical jargon or complicated definitions. Always keep the response in Hindi script and under 200 words. " +
+                "The goal is not just to understand the concept, but to feel it deeply. " +
+                "If the question is simple, skip the analogy and just give a clear explanation.";
+        }
+    }
+
 }
