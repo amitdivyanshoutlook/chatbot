@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class PerplexityService {
 
     private static final String API_URL = "https://api.perplexity.ai/chat/completions";
-    private static final String API_KEY = "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";
+    private static final String API_KEY = "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";
     private final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
