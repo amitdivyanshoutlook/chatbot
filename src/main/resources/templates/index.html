@@ -1750,6 +1750,12 @@
                             <div class="feature-badge">New</div>
                         </div>
                         
+                        <div class="dropdown-item" onclick="openGovernmentJobs()">
+                            <i class="fas fa-university"></i>
+                            <span>Government Jobs</span>
+                            <div class="feature-badge">New</div>
+                        </div>
+
                         <div class="dropdown-divider"></div>
                         
                         <div class="dropdown-item logout-item" onclick="logout()">
@@ -2673,7 +2679,12 @@
         function openCareerGuidance() {
             window.location.href = '/career-guidance';
         }
-        
+
+        // Government Jobs function
+        function openGovernmentJobs() {
+            window.location.href = '/government-jobs';
+        }
+
         // Logout function with animation
         function logout() {
             // Stop any running audio/speech first
@@ -3199,3 +3210,4 @@
     <script src="/js/app.js"></script>
 </body>
 </html>
+
