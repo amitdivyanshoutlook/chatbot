@@ -138,6 +138,7 @@ public class GovernmentJobService {
                 "}\n\n" +
                 "Provide only the JSON response without any additional text or formatting. " +
                 "Include only currently open and active government job postings that match the profile. " +
+                "Jobs's last date  to apply shouldn't passed today's datee"+
                 "If no specific jobs are available, provide general categories of government jobs suitable for the profile.";
     }
 }
